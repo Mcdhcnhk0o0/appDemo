@@ -1,0 +1,33 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+include ":app"
+include ":app_flutter"
+
+dependencyResolutionManagement {
+    // 由于集成Flutter，每个模块用自己的依赖与仓库
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "AppDemo"
+
+include ":app"
+include ":app_flutter"
+
+// flutter
+setBinding(new Binding([gradle: this]))
+evaluate(new File(
+        settingsDir.parentFile,
+        'app_flutter/.android/include_flutter.groovy'
+))
