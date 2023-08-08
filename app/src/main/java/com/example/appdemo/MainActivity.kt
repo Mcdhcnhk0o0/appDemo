@@ -1,5 +1,6 @@
 package com.example.appdemo
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -19,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.appdemo.flutter.FlutterRuntimeUtil
 import com.example.appdemo.ui.theme.AppDemoTheme
+import com.example.sleep.MainActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +47,9 @@ class MainActivity : ComponentActivity() {
     fun ActionButton() {
         Button(
             onClick = {
-                FlutterRuntimeUtil.openFlutterContainerWithCachedEngine(MainActivity@this, "")
+                val intent = Intent(MainActivity@this, MainActivity::class.java)
+                startActivity(intent)
+//                FlutterRuntimeUtil.openFlutterContainerWithCachedEngine(MainActivity@this, "")
             }
         ) {
             Text(text = "Click me to open Flutter!")

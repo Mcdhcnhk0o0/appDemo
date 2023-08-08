@@ -23,6 +23,7 @@ dependencyResolutionManagement {
 rootProject.name = "AppDemo"
 
 include ":app"
+include ":sleep"
 include ":app_flutter"
 
 // flutter
@@ -31,3 +32,4 @@ evaluate(new File(
         settingsDir.parentFile,
         'app_flutter/.android/include_flutter.groovy'
 ))
+include ':sleep'
