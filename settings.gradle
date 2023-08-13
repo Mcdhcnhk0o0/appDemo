@@ -33,3 +33,4 @@ evaluate(new File(
         'app_flutter/.android/include_flutter.groovy'
 ))
 include ':sleep'
+include ':router'
