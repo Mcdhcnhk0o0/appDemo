@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name="com.example.sleep.MainApplication"
+        android:name=".application.MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,8 +14,18 @@
         android:theme="@style/Theme.AppDemo"
         tools:targetApi="31">
         <activity
+            android:name=".activity.RouterCenterActivity"
+            android:exported="false"
+            android:label="@string/title_activity_router_center"
+            android:theme="@style/Theme.AppDemo" />
+        <activity
+            android:name=".activity.JavaRouterTestActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight" />
+        <activity
             android:name=".activity.KotlinRouterTestActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -26,6 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="io.flutter.embedding.android.FlutterActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"

@@ -1,9 +1,7 @@
 package com.example.router;
 
 import com.example.router.annotation.Router;
-import com.example.router.annotation.RouterManager;
 import com.google.auto.service.AutoService;
-import com.google.common.reflect.TypeToken;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
@@ -44,6 +42,7 @@ public class RouterProcessor extends AbstractProcessor {
         super.init(processingEnv);
         filer = processingEnv.getFiler();
         messager = processingEnv.getMessager();
+        messager.printMessage(Diagnostic.Kind.NOTE, "messager init!");
     }
 
     @Override
@@ -69,7 +68,7 @@ public class RouterProcessor extends AbstractProcessor {
                 TypeElement typeElement = (TypeElement) element;
                 String className = typeElement.getQualifiedName().toString();
                 String url = typeElement.getAnnotation(Router.class).value();
-                String packageName = typeElement.getAnnotation(Router.class).g();
+                String packageName = typeElement.getAnnotation(Router.class).group();
                 if (originalPackageName == null) {
                     originalPackageName = packageName;
                 } else {

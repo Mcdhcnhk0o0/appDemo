@@ -1,4 +1,4 @@
-package com.example.router.annotation;
+package com.example.router;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +30,10 @@ public class RouterManager {
             e.printStackTrace();
         }
         return clazz;
+    }
+
+    public Map<String, String> getRouterMap() {
+        return routerMap;
     }
 
     private static final class InnerClass {

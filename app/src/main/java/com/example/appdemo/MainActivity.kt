@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.appdemo.activity.RouterCenterActivity
 import com.example.appdemo.flutter.FlutterRuntimeUtil
 import com.example.appdemo.ui.theme.AppDemoTheme
 import com.example.sleep.MainActivity
@@ -47,12 +48,12 @@ class MainActivity : ComponentActivity() {
     fun ActionButton() {
         Button(
             onClick = {
-                val intent = Intent(MainActivity@this, MainActivity::class.java)
+                val intent = Intent(MainActivity@this, RouterCenterActivity::class.java)
                 startActivity(intent)
 //                FlutterRuntimeUtil.openFlutterContainerWithCachedEngine(MainActivity@this, "")
             }
         ) {
-            Text(text = "Click me to open Flutter!")
+            Text(text = "Click me to open RouterCenter!")
         }
     }
 
