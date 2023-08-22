@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.appdemo.activity.RouterCenterActivity
 import com.example.appdemo.flutter.FlutterRuntimeUtil
@@ -37,7 +36,8 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Greeting(name = "Android")
-                        ActionButton()
+                        NativeActionButton()
+                        FlutterActionButton()
                     }
                 }
             }
@@ -46,15 +46,26 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ActionButton() {
+    fun NativeActionButton() {
         Button(
             onClick = {
-                val intent = Intent(MainActivity@this, RouterCenterActivity::class.java)
+                val intent = Intent(this, RouterCenterActivity::class.java)
                 startActivity(intent)
 //                FlutterRuntimeUtil.openFlutterContainerWithCachedEngine(MainActivity@this, "")
             }
         ) {
             Text(text = "Click me to open RouterCenter!")
+        }
+    }
+
+    @Composable
+    fun FlutterActionButton() {
+        Button(
+            onClick = {
+                FlutterRuntimeUtil.openFlutterContainerWithCachedEngine(this, "")
+            }
+        ) {
+            Text(text = "Click me to open FlutterContainer!")
         }
     }
 
@@ -64,7 +75,9 @@ class MainActivity : ComponentActivity() {
 fun Greeting(name: String) {
     Text(
         text = "Hello $name!",
-        modifier = Modifier.fillMaxWidth().padding(top = 30.dp, bottom = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 30.dp, bottom = 10.dp),
         textAlign = TextAlign.Center
     )
 }

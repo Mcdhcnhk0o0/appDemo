@@ -1,4 +1,5 @@
 <resources>
-    <string name="app_name">AppDemo</string>
+    <string name="app_name">阿噗</string>
     <string name="title_activity_router_center">RouterCenterActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>
