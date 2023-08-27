@@ -1,4 +1,4 @@
-package com.example.appdemo.network.service
+package com.example.appdemo.network.protocol
 
 import com.example.appdemo.network.response.Result
 import com.example.appdemo.network.response.LoginResult

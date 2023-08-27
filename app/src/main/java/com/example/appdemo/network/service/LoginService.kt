@@ -1,6 +1,7 @@
 package com.example.appdemo.network.service
 
 import com.example.appdemo.network.ServiceCreator
+import com.example.appdemo.network.protocol.LoginServiceApi
 
 object LoginService {
 
