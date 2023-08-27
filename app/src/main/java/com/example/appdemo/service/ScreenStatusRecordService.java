@@ -1,14 +1,22 @@
 package com.example.appdemo.service;
 
+import static androidx.core.app.NotificationCompat.PRIORITY_MIN;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
 import androidx.room.Room;
 
+import com.example.appdemo.R;
 import com.example.appdemo.broadcast.ScreenStatusBroadcastReceiver;
 import com.example.appdemo.broadcast.listener.ListenerProxy;
 import com.example.appdemo.broadcast.listener.ScreenStatusListener;
@@ -44,6 +52,17 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
     @Override
     public void onCreate() {
         super.onCreate();
+        String channelId = "screen_monitor";
+        createNotificationChannel(channelId, "屏幕监控");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
+        Notification notification =
+                builder
+                .setContentText("屏幕监控服务已启动！")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setPriority(PRIORITY_MIN)
+                .setCategory(Notification.CATEGORY_SERVICE)
+                .build();
+        startForeground(1, notification);
         initDatabaseAsync();
         ListenerProxy.INSTANCE.addScreenStatusListener(this);
         Log.d(TAG, "service created!");
@@ -117,6 +136,19 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
         } else {
             Log.e(TAG, "database screen_db is *not* initialized!");
         }
+    }
+
+    private String createNotificationChannel(String channelId, String channelName) {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.O) {
+            return channelId;
+        }
+        NotificationChannel chan = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        NotificationManager service =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        service.createNotificationChannel(chan);
+        return channelId;
     }
 
 }

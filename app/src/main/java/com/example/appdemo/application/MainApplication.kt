@@ -2,6 +2,7 @@ package com.example.appdemo.application
 
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import com.example.appdemo.broadcast.ScreenStatusBroadcastReceiver
 import com.example.appdemo.router.OneRouter
 import com.example.appdemo.service.ScreenStatusRecordService
@@ -21,7 +22,11 @@ class MainApplication: BaseApplication() {
 
     private fun initListener() {
         val intent = Intent(this, ScreenStatusRecordService::class.java)
-        startService(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
+        }
 
         val filter = IntentFilter()
         filter.addAction(Intent.ACTION_SCREEN_ON)

@@ -3,6 +3,7 @@ package com.example.appdemo.broadcast
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.example.appdemo.broadcast.listener.ListenerProxy
 import com.example.appdemo.broadcast.listener.ScreenStatusListener
 import com.example.appdemo.service.ScreenStatusRecordService
@@ -27,7 +28,12 @@ class ScreenStatusBroadcastReceiver : BroadcastReceiver() {
 
     private fun tryToStartScreenService(context: Context) {
         val intent = Intent(context, ScreenStatusRecordService::class.java)
-        context.startService(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
+        }
+
     }
 
 
