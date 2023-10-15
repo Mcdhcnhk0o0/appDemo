@@ -2,9 +2,9 @@ package com.example.appdemo.application
 
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
-import com.example.appdemo.broadcast.ScreenStatusBroadcastReceiver
+import com.example.appdemo.broadcast.ScreenStatusReceiver
 import com.example.appdemo.router.OneRouter
+import com.example.appdemo.service.ActivityManagerService
 import com.example.appdemo.service.ScreenStatusRecordService
 
 class MainApplication: BaseApplication() {
@@ -13,6 +13,7 @@ class MainApplication: BaseApplication() {
         super.onCreate()
         initRouter()
         initListener()
+        initService()
     }
 
     private fun initRouter() {
@@ -22,17 +23,17 @@ class MainApplication: BaseApplication() {
 
     private fun initListener() {
         val intent = Intent(this, ScreenStatusRecordService::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(intent)
-        } else {
-            startService(intent)
-        }
+        startService(intent)
 
         val filter = IntentFilter()
         filter.addAction(Intent.ACTION_SCREEN_ON)
         filter.addAction(Intent.ACTION_SCREEN_OFF)
         filter.addAction(Intent.ACTION_USER_PRESENT)
-        registerReceiver(ScreenStatusBroadcastReceiver(), filter)
+        registerReceiver(ScreenStatusReceiver(), filter)
+    }
+
+    private fun initService() {
+        registerActivityLifecycleCallbacks(ActivityManagerService)
     }
 
 }

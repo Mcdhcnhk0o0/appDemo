@@ -11,8 +11,11 @@ import java.util.List;
 @Dao
 public interface ScreenStatusDao {
 
-    @Query("select * from screen_status_record")
+    @Query("select * from screen_status_record order by time_stamp desc")
     List<ScreenStatusBean> getAllRecords();
+
+    @Query("select * from screen_status_record order by time_stamp desc limit :limit offset :offset")
+    List<ScreenStatusBean> getRecentRecords(int limit, int offset);
 
     @Insert
     void addRecord(ScreenStatusBean record);

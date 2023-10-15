@@ -34,3 +34,4 @@ evaluate(new File(
 ))
 include ':sleep'
 include ':router'
+include ':home'

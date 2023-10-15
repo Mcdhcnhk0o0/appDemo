@@ -4,11 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import com.example.appdemo.broadcast.listener.ListenerProxy
-import com.example.appdemo.broadcast.listener.ScreenStatusListener
 import com.example.appdemo.service.ScreenStatusRecordService
 
-class ScreenStatusBroadcastReceiver : BroadcastReceiver() {
+class ScreenStatusReceiver : BroadcastReceiver() {
 
     private val screenStatusListenerProxy = ListenerProxy
 
@@ -23,6 +23,8 @@ class ScreenStatusBroadcastReceiver : BroadcastReceiver() {
             listeners.forEach { it.onScreenOff() }
         } else if (Intent.ACTION_USER_PRESENT == action) {
             listeners.forEach { it.onUserPresent() }
+        } else {
+            Log.d("ScreenStatusReceiver", "Nothing, just keep alive")
         }
     }
 
@@ -35,6 +37,5 @@ class ScreenStatusBroadcastReceiver : BroadcastReceiver() {
         }
 
     }
-
 
 }

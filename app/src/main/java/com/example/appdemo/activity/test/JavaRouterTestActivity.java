@@ -7,7 +7,7 @@ import android.os.Bundle;
 import com.example.appdemo.R;
 import com.example.router.annotation.Router;
 
-@Router("native://java_native")
+@Router(url = "native://java_native", description = "路由测试")
 public class JavaRouterTestActivity extends AppCompatActivity {
 
     @Override

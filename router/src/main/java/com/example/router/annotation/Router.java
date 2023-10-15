@@ -9,8 +9,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface Router {
 
-    String value() default "";
+    String url() default "";
 
     String group() default "main";
+
+    String description() default "what dose this activity do";
 
 }

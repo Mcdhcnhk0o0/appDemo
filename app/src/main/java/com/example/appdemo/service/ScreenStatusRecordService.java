@@ -2,22 +2,25 @@ package com.example.appdemo.service;
 
 import static androidx.core.app.NotificationCompat.PRIORITY_MIN;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.room.Room;
 
 import com.example.appdemo.R;
-import com.example.appdemo.broadcast.ScreenStatusBroadcastReceiver;
+import com.example.appdemo.broadcast.ScreenStatusReceiver;
 import com.example.appdemo.broadcast.listener.ListenerProxy;
 import com.example.appdemo.broadcast.listener.ScreenStatusListener;
 import com.example.appdemo.database.ScreenStatusRecordDatabase;
@@ -25,12 +28,7 @@ import com.example.appdemo.database.dao.ScreenStatusDao;
 import com.example.appdemo.database.entity.ScreenState;
 import com.example.appdemo.database.entity.ScreenStatusBean;
 
-import org.json.JSONObject;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 public class ScreenStatusRecordService extends Service implements ScreenStatusListener {
 
@@ -38,8 +36,8 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
 
     private ScreenStatusRecordDatabase recordDatabase;
 
-    private final String recordSp = "ScreenStatusRecordSp";
-    private final String recordKey = "ScreenStatusRecordKey";
+    private static final int ONE_MINUTE = 6 * 1000;
+    private static final int PENDING_REQUEST = 0;
 
     public ScreenStatusRecordService() {
     }
@@ -66,6 +64,18 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
         initDatabaseAsync();
         ListenerProxy.INSTANCE.addScreenStatusListener(this);
         Log.d(TAG, "service created!");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        long triggerAtTime = SystemClock.elapsedRealtime() + ONE_MINUTE;
+        Intent i = new Intent(this, ScreenStatusReceiver.class);
+        @SuppressLint("WrongConstant")
+        PendingIntent pIntent = PendingIntent.getBroadcast(this, PENDING_REQUEST, i, PENDING_REQUEST | PendingIntent.FLAG_IMMUTABLE);
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pIntent);
+        Log.d(TAG, "prepare to send broadcast when: " + triggerAtTime + "(as well as " + new Date(triggerAtTime));
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -100,8 +110,8 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
 
     private void butIWantToReborn() {
         try {
-            Intent intent = new Intent("com.example.appdemo.screenStatusRecordService");
-            sendBroadcast(intent);
+//            Intent intent = new Intent("com.example.appdemo.screenStatusRecordService");
+//            sendBroadcast(intent);
             Log.d(TAG, "try to restart!");
         } catch (Exception e) {
             Log.e(TAG, "restart error: " + e.getMessage());

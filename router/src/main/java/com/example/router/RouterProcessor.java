@@ -67,7 +67,7 @@ public class RouterProcessor extends AbstractProcessor {
                 }
                 TypeElement typeElement = (TypeElement) element;
                 String className = typeElement.getQualifiedName().toString();
-                String url = typeElement.getAnnotation(Router.class).value();
+                String url = typeElement.getAnnotation(Router.class).url();
                 String packageName = typeElement.getAnnotation(Router.class).group();
                 if (originalPackageName == null) {
                     originalPackageName = packageName;

@@ -33,7 +33,7 @@ import com.example.router.annotation.Router
 
 data class ChatModel(val message: String, val fromServer: Boolean)
 
-@Router("native://chat")
+@Router(url = "native://chat", description = "远程聊天")
 class ChatActivity: ComponentActivity(), WebSocketMessageListener {
 
     private val localMessage = mutableStateOf("")

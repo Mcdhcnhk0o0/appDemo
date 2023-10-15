@@ -2,4 +2,8 @@
     <string name="app_name">阿噗</string>
     <string name="title_activity_router_center">RouterCenterActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

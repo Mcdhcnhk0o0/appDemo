@@ -2,4 +2,17 @@
 <resources>
 
     <style name="Theme.AppDemo" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.AppCompat.AppDemo.Splash" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@drawable/app_splash_background</item>
+    </style>
+
+    <style name="Theme.AppDemo.Splash" parent="android:Theme.Black.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@drawable/app_splash_background</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
 </resources>

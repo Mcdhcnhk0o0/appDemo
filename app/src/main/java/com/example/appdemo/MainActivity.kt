@@ -20,9 +20,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.appdemo.activity.RouterCenterActivity
 import com.example.appdemo.flutter.FlutterRuntimeUtil
+import com.example.appdemo.router.OneRouter
 import com.example.appdemo.ui.theme.AppDemoTheme
+import com.example.router.annotation.Router
 
 
+@Router(url = "native://main")
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +46,12 @@ class MainActivity : ComponentActivity() {
             }
         }
         FlutterRuntimeUtil.initFlutterEngineWithContext(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        OneRouter.getInstance().dispatch("native://home", this@MainActivity)
+        finish()
     }
 
     @Composable
