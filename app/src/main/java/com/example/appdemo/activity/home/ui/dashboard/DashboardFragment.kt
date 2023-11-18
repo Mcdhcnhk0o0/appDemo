@@ -57,7 +57,6 @@ class DashboardFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 RouterActionGrid()
-
             }
         }
     }
@@ -72,14 +71,14 @@ class DashboardFragment : Fragment() {
 
         RouterManager.getInstance().routerMap.forEach{
             val uri = Uri.parse(it.key)
-            routerList.add(RouterModel(uri.authority ?: "Unknown", it.key, ""))
+            var description = RouterManager.getInstance().routerDescriptionMap[it.key]
+            if (description.isNullOrBlank()) {
+                description = uri.authority ?: ""
+            }
+            routerList.add(RouterModel(uri.authority ?: "Unknown", it.key, description))
         }
         
-        routerList.add(RouterModel("router", "sss", "六月的是"))
-        routerList.add(RouterModel("home", "sss", "都是当时"))
-        routerList.add(RouterModel("test", "sss", "sadasd"))
-        routerList.add(RouterModel("hahaha", "sss", "我打得开"))
-        routerList.add(RouterModel("123", "sss", "的急啊看电视剧"))
+        routerList.add(RouterModel("routerTest", "", "勿点"))
 
         LazyVerticalGrid(columns = GridCells.Fixed(4)) {
             items(routerList.size) {i ->

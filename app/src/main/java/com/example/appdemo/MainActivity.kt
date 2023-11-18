@@ -25,7 +25,7 @@ import com.example.appdemo.ui.theme.AppDemoTheme
 import com.example.router.annotation.Router
 
 
-@Router(url = "native://main")
+@Router(url = "native://main", description = "主函数")
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +45,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        FlutterRuntimeUtil.initFlutterEngineWithContext(this)
     }
 
     override fun onResume() {

@@ -50,12 +50,14 @@ import com.example.appdemo.activity.home.ui.home.HomeFragment
 import com.example.appdemo.activity.home.ui.notifications.NotificationsFragment
 import com.example.appdemo.activity.viewmodel.HomeViewModel
 import com.example.appdemo.activity.viewmodel.NavigationItemModel
+import com.example.appdemo.flutter.FlutterRootFragment
+import com.example.appdemo.flutter.FlutterRuntimeUtil
 import com.example.appdemo.util.StatusBarUtil
 import com.example.router.annotation.Router
+import io.flutter.embedding.android.FlutterFragment
 
 
-
-@Router(url = "native://home")
+@Router(url = "native://home", description = "首页")
 class HomeActivity: FragmentActivity() {
 
     private val viewModel by viewModels<HomeViewModel>()
@@ -116,28 +118,35 @@ class HomeActivity: FragmentActivity() {
     @Composable
     fun ContentFragment(paddingValues: PaddingValues) {
         val topPadding = StatusBarUtil.getStatusBarHeight()
-//        FragmentContainer(
-//            modifier = Modifier.fillMaxSize().padding(top = topPadding.dp),
-//            fragmentManager = supportFragmentManager,
-//            commit = { add(it, getFragment()) }
-//        )
         val fragment = getFragment()
+        val flutterFragment = FlutterRootFragment
+            .withNewEngine().initialRoute("fragment").build<FlutterFragment>()
         Log.d("HomeActivity", "current fragment: $fragment")
 
         Column {
-            Text(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .padding(top = topPadding.dp),
-                text = "Content In ${viewModel.selectedTabModel.description}",
-                fontSize = 30.sp
-            )
-            FragmentContainer(
-                modifier = Modifier.fillMaxSize(),
-                fragment = fragment,
-                fragmentManager = supportFragmentManager,
-                commit =  { add(it, fragment) }
-            )
+            if (viewModel.selectedTabModel.id != "mine") {
+                Text(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .padding(top = topPadding.dp),
+                    text = "Content In ${viewModel.selectedTabModel.description}",
+                    fontSize = 30.sp
+                )
+                FragmentContainer(
+                    modifier = Modifier.fillMaxSize(),
+                    fragment = fragment,
+                    fragmentManager = supportFragmentManager,
+                    commit =  { add(it, fragment) }
+                )
+            } else {
+                FragmentContainer(
+                    modifier = Modifier.fillMaxSize(),
+                    fragment = flutterFragment,
+                    fragmentManager = supportFragmentManager,
+                    commit =  { replace(it, flutterFragment) }
+                )
+            }
+
         }
     }
 
@@ -174,13 +183,11 @@ fun FragmentContainer(
             if (!initialized) {
                 fragmentManager.commit { commit(view.id) }
                 initialized = true
-                Log.d("HomeActivity", "fragment initialized!!!")
+                Log.d("HomeActivity", "fragment $fragment initialized!!!")
 
             } else {
-//                fragmentManager.onContainerAvailable(view)
                 fragmentManager.beginTransaction().replace(containerId, fragment).commitNowAllowingStateLoss()
-                Log.d("HomeActivity", "fragment changed!!!")
-
+                Log.d("HomeActivity", "fragment changed, now: $fragment")
             }
         }
     )

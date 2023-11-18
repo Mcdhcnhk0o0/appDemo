@@ -18,7 +18,7 @@ public class WebSocketService extends WebSocketListener {
 
     private static final String TAG = WebSocketService.class.getSimpleName();
 
-    private static final String LOCAL_WEBSOCKET_URL = "ws://192.168.0.103:8880/demo/websocket/123";
+    private static final String LOCAL_WEBSOCKET_URL = "ws://192.168.0.102:8880/demo/websocket/123";
     private static final String REMOTE_WEBSOCKET_URL = "ws://123.249.16.84:8880/demo/websocket";
 
     private final OkHttpClient client = new OkHttpClient();
@@ -55,6 +55,7 @@ public class WebSocketService extends WebSocketListener {
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         super.onOpen(webSocket, response);
+        Log.d(TAG, "websocket open: " + webSocket);
     }
 
     @Override
@@ -64,6 +65,18 @@ public class WebSocketService extends WebSocketListener {
             listener.onMessage(text);
         }
         Log.d(TAG, "receive message from server: " + text);
+    }
+
+    @Override
+    public void onClosed(WebSocket webSocket, int code, String reason) {
+        super.onClosed(webSocket, code, reason);
+        Log.d(TAG, "remote websocket " + webSocket + " closed because: " + reason);
+    }
+
+    @Override
+    public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+        super.onFailure(webSocket, t, response);
+        Log.e(TAG, "error in websocket: " + t.getMessage() + ". response: " + response);
     }
 
     public boolean sendMessage(String message) {

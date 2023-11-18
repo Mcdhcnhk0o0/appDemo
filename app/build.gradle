@@ -67,7 +67,7 @@ dependencies {
     kapt project(":router")
     annotationProcessor project(":router")
 
-//    implementation project(":sleep")
+    implementation project(":home")
     implementation project(":router")
     implementation project(":flutter")
 

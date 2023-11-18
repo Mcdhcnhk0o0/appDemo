@@ -5,9 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appdemo.R
+import com.example.appdemo.activity.FragmentContainer
 import com.example.appdemo.databinding.FragmentNotificationsBinding
 import com.example.appdemo.flutter.FlutterRootFragment
 import com.example.appdemo.flutter.FlutterRuntimeUtil
@@ -15,18 +23,11 @@ import io.flutter.embedding.android.FlutterFragment
 
 class NotificationsFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private var flutterFragment: FlutterFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val flutterFragment = FlutterRootFragment.withCachedEngine(FlutterRuntimeUtil.DEFAULT_FLUTTER_ENGINE).build<FlutterFragment>()
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.nav_host_fragment_activity_navigation, flutterFragment)
-            .commit()
+        acquireFlutterFragment()
     }
 
     override fun onCreateView(
@@ -34,21 +35,29 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
-
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
+        acquireFlutterFragment()
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                FragmentContainer(
+                    modifier = Modifier.height(400.dp),
+                    fragment = flutterFragment!!,
+                    fragmentManager = requireActivity().supportFragmentManager,
+                    commit =  { replace(it, flutterFragment!!) }
+                )
+            }
         }
-        return root
+    }
+
+    private fun acquireFlutterFragment() {
+        if (flutterFragment != null) {
+            return
+        }
+        flutterFragment = FlutterRootFragment
+            .withCachedEngine(FlutterRuntimeUtil.DEFAULT_FLUTTER_ENGINE).build<FlutterFragment>()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 }

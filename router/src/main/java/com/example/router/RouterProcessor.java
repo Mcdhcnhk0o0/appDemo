@@ -69,6 +69,7 @@ public class RouterProcessor extends AbstractProcessor {
                 String className = typeElement.getQualifiedName().toString();
                 String url = typeElement.getAnnotation(Router.class).url();
                 String packageName = typeElement.getAnnotation(Router.class).group();
+                String description = typeElement.getAnnotation(Router.class).description();
                 if (originalPackageName == null) {
                     originalPackageName = packageName;
                 } else {
@@ -77,6 +78,7 @@ public class RouterProcessor extends AbstractProcessor {
                     }
                 }
                 methodBuilder.addStatement("$T.getInstance().register($S, $S)", RouterManager.class, url, className);
+                methodBuilder.addStatement("$T.getInstance().addDescription($S, $S)", RouterManager.class, url, description);
             }
             TypeSpec routerInit = TypeSpec.classBuilder(INIT_CLASS)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)

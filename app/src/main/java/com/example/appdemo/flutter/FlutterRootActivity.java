@@ -7,9 +7,12 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.router.annotation.Router;
+
 import io.flutter.embedding.engine.FlutterEngine;
 
 
+@Router(url = "native://flutter/main", description = "Flutter")
 public class FlutterRootActivity extends FlutterActivity {
 
     public static CachedEngineIntentBuilder withCachedEngine(@NonNull String cachedEngineId) {

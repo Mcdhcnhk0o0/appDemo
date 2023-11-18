@@ -37,7 +37,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-@Router(url = "native://login")
+@Router(url = "native://login", description = "登录")
 class LoginActivity : ComponentActivity() {
 
     companion object {

@@ -8,8 +8,7 @@ pluginManagement {
     }
 }
 
-include ":app"
-include ":app_flutter"
+
 
 dependencyResolutionManagement {
     // 由于集成Flutter，每个模块用自己的依赖与仓库
@@ -22,16 +21,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "AppDemo"
 
-include ":app"
-include ":sleep"
-include ":app_flutter"
-
 // flutter
 setBinding(new Binding([gradle: this]))
 evaluate(new File(
         settingsDir.parentFile,
         'app_flutter/.android/include_flutter.groovy'
 ))
-include ':sleep'
+
+include ":app"
+include ":app_flutter"
 include ':router'
 include ':home'

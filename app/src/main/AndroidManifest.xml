@@ -27,11 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.home.NavigationActivity"
-            android:exported="false"
-            android:label="@string/title_activity_navigation"
-            android:theme="@style/Theme.AppCompat.DayNight" />
 
         <service
             android:name=".service.ScreenStatusRecordService"

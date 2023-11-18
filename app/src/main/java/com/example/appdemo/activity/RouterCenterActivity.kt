@@ -28,7 +28,7 @@ import com.example.router.annotation.Router
 data class RouterModel(val name: String, val url: String)
 
 
-@Router(url = "native://router_center")
+@Router(url = "native://router_center", description = "路由表")
 class RouterCenterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

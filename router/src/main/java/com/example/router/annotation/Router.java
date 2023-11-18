@@ -13,6 +13,6 @@ public @interface Router {
 
     String group() default "main";
 
-    String description() default "what dose this activity do";
+    String description() default "";
 
 }

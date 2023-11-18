@@ -35,7 +35,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-@Router(url = "native://screen_log")
+@Router(url = "native://screen_log", description = "屏幕监控")
 class ScreenLogActivity: ComponentActivity() {
 
     private val screenRecordList = mutableStateListOf<ScreenStatusBean>()

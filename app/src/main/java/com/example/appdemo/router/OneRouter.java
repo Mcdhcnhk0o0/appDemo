@@ -43,7 +43,7 @@ public final class OneRouter implements IRouter {
             Class.forName(fullName).getMethod(RouterProcessor.INIT_METHOD).invoke(null);
             Log.d(TAG, "Router in " + fullName + " is registered!");
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.toString());
         }
     }
 
