@@ -6,6 +6,7 @@ import android.util.Log;
 import com.example.appdemo.router.protocol.IRouter;
 import com.example.appdemo.router.wrapper.FlutterRouterWrapper;
 import com.example.appdemo.router.wrapper.NativeRouterWrapper;
+import com.example.appdemo.service.ActivityManagerService;
 import com.example.router.RouterProcessor;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public final class OneRouter implements IRouter {
 
     private static final String TAG = OneRouter.class.getSimpleName();
 
-    private List<IRouter> routers = new ArrayList<>();
+    private final List<IRouter> routers = new ArrayList<>();
 
     private OneRouter() {
         routers.add(NativeRouterWrapper.getInstance());
@@ -28,7 +29,14 @@ public final class OneRouter implements IRouter {
 
     public void init() { }
 
+    public boolean dispatch(String url) {
+        return dispatch(url, null);
+    }
+
     public boolean dispatch(String url, Context context) {
+        if (context == null) {
+            context = getTopActivity();
+        }
         for (IRouter router: routers) {
             if (router.dispatch(url, context)) {
                 return true;
@@ -45,6 +53,13 @@ public final class OneRouter implements IRouter {
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
+    }
+
+    private Context getTopActivity() {
+        if (ActivityManagerService.getTopActivity() != null) {
+            return ActivityManagerService.getTopActivity().get();
+        }
+        return null;
     }
 
     private static final class InnerClass {

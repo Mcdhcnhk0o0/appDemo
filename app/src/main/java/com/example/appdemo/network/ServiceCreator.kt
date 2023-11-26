@@ -2,6 +2,7 @@ package com.example.appdemo.network
 
 import android.util.Log
 import com.example.appdemo.BuildConfig
+import com.example.appdemo.util.SharedPrefUtil
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -12,17 +13,42 @@ object ServiceCreator {
 
     private const val TAG = "HttpDebugLogger"
 
-    private const val localBaseUrl = "http://192.168.0.103:8880/demo/"
+    private const val localBaseUrl = "http://192.168.0.102:8880/demo/"
 
     private const val remoteBaseUrl = "http://123.249.16.84:8880/demo/"
 
-    private val okHttpClient: OkHttpClient =
-        OkHttpClient.Builder()
+    private val defaultHttpClient: OkHttpClient =
+        buildHttpClientWithToken(SharedPrefUtil.getUserTokenCache())
+
+    private var retrofit: Retrofit? = null
+
+    @JvmStatic
+    @Synchronized
+    fun <T> create(serviceClass: Class<T>): T {
+        if (retrofit == null) {
+            retrofit = getRetrofit(getBaseUrl(), defaultHttpClient)
+        }
+        return retrofit!!.create(serviceClass)
+    }
+
+    @JvmStatic
+    fun refreshToken(token: String) {
+        val newHttpClient = buildHttpClientWithToken(token)
+        Log.d(TAG, "token is refreshed!")
+        Log.d(TAG, "current token: $token")
+        Log.d(TAG, "current userId: ${SharedPrefUtil.getUserIdCache()}")
+        Log.d(TAG, "current request mode: ${SharedPrefUtil.getBaseUrlSetting()}")
+        retrofit = getRetrofit(getBaseUrl(), newHttpClient)
+    }
+
+    @JvmStatic
+    private fun buildHttpClientWithToken(token: String): OkHttpClient {
+        return OkHttpClient.Builder()
             .apply {
                 if (BuildConfig.DEBUG) {
                     addInterceptor(
                         HttpLoggingInterceptor {
-                            message -> Log.d(TAG, message)
+                                message -> Log.d(TAG, message)
                         }.apply {
                             level = HttpLoggingInterceptor.Level.BODY
                         }
@@ -34,23 +60,30 @@ object ServiceCreator {
                     val original = chain.request()
                     return@addInterceptor chain.proceed(
                         chain.request().newBuilder()
-                            .header(TokenManager.TOKEN, TokenManager.getToken())
+                            .header("token", token)
                             .method(original.method(), original.body())
                             .build()
                     )
                 }
             }
             .build()
+    }
 
-    private val retrofit: Retrofit =
-        Retrofit.Builder()
-            .baseUrl(if(BuildConfig.DEBUG) localBaseUrl else remoteBaseUrl)
-            .client(okHttpClient)
+    private fun getBaseUrl(): String {
+        var baseUrl = remoteBaseUrl
+        val baseUrlConfig = SharedPrefUtil.getBaseUrlSetting()
+        if (baseUrlConfig == "debug") {
+            baseUrl = localBaseUrl
+        }
+        return baseUrl
+    }
+
+    private fun getRetrofit(baseUrl: String, client: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
-    fun <T> create(serviceClass: Class<T>): T {
-        return retrofit.create(serviceClass)
     }
 
 }

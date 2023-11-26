@@ -1,5 +1,6 @@
 package com.example.appdemo.activity
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -78,6 +79,11 @@ class HomeActivity: FragmentActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        viewModel.needRefresh = true
+    }
+
     @Preview
     @Composable
     fun HomePage() {
@@ -91,7 +97,7 @@ class HomeActivity: FragmentActivity() {
     @Composable
     fun BottomBar() {
         BottomNavigation(
-            backgroundColor = Color.Black
+            backgroundColor = Color.Black 
         ) {
             items.forEach { item ->
                 val selected = item == viewModel.selectedTabModel

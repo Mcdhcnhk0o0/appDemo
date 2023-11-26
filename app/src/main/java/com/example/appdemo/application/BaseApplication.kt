@@ -3,6 +3,7 @@ package com.example.appdemo.application
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
+import com.example.appdemo.util.ApplicationUtil
 import java.lang.reflect.Method
 
 open class BaseApplication: Application() {
@@ -12,6 +13,7 @@ open class BaseApplication: Application() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         initModuleApplications()
+        ApplicationUtil.init(this)
     }
 
     override fun onCreate() {

@@ -1,7 +1,7 @@
-package com.example.appdemo.network.response
+package com.example.appdemo.pojo.dao
 
 data class User(
-    var userId: Long?,
+    var userId: String?,
     var email: String?,
     var userName: String?,
     var userNickname: String?,

@@ -13,9 +13,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/app_flutter" />
+            <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/home" />
             <option value="$PROJECT_DIR$/router" />
-            <option value="$PROJECT_DIR$/sleep" />
             <option value="$PROJECT_DIR$/../app_flutter/.android/Flutter" />
           </set>
         </option>

@@ -1,8 +1,7 @@
 package com.example.appdemo.network.protocol
 
 import com.example.appdemo.network.response.Result
-import com.example.appdemo.network.response.LoginResult
-import com.google.gson.JsonObject
+import com.example.appdemo.pojo.vo.LoginVO
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -14,11 +13,18 @@ interface LoginServiceApi {
     fun loginByEmail(
         @Query("email") email: String,
         @Query("password") password: String
-    ): Call<Result<LoginResult>>
+    ): Call<Result<LoginVO>>
+
+    @GET("login/signup")
+    fun signUp(
+        @Query("email") email: String,
+        @Query("name") name: String,
+        @Query("password") password: String
+    ): Call<Result<LoginVO>>
 
     @GET("login/logout")
     fun logout(
         @Query("userId") userId: String
-    ): Call<JsonObject>
+    ): Call<Result<LoginVO>>
 
 }

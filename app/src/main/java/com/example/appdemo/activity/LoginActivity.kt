@@ -1,41 +1,40 @@
 package com.example.appdemo.activity
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.activity.viewModels
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.appdemo.network.response.Result
-import com.example.appdemo.network.response.LoginResult
-import com.example.appdemo.network.service.LoginService
-import com.example.appdemo.ui.theme.AppDemoTheme
+import com.example.appdemo.activity.viewmodel.LoginMode
+import com.example.appdemo.activity.viewmodel.LoginViewModel
+import com.example.appdemo.network.ServiceCreator
+import com.example.appdemo.network.helper.LoginHelper
+import com.example.appdemo.pojo.vo.LoginVO
+import com.example.appdemo.util.RouterUtil
+import com.example.appdemo.util.SharedPrefUtil
+import com.example.appdemo.util.ToastUtil
 import com.example.router.annotation.Router
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 @Router(url = "native://login", description = "登录")
 class LoginActivity : ComponentActivity() {
@@ -44,20 +43,16 @@ class LoginActivity : ComponentActivity() {
         private const val TAG = "LoginActivity"
     }
 
-    private var loginEmail: String = ""
-    private var loginPassword: String = ""
-    private var loginResult = mutableStateOf("")
+    private val viewModel by viewModels<LoginViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppDemoTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.LightGray
-                ) {
-                    LoginPage()
-                }
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color.LightGray
+            ) {
+                LoginPage()
             }
         }
     }
@@ -68,42 +63,70 @@ class LoginActivity : ComponentActivity() {
         Column(
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         ) {
+            ModeSwitcher()
             Spacer(modifier = Modifier.height(100.dp))
-            LoginInputBox()
+            InputBox()
             Spacer(modifier = Modifier.height(30.dp))
-            LoginButton()
+            ActionButton()
             Spacer(modifier = Modifier.height(50.dp))
-            LoginResultArea()
         }
     }
 
     @Composable
-    fun LoginInputBox() {
-        var email by remember {
-            mutableStateOf(loginEmail)
+    fun ModeSwitcher() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .height(40.dp)
+                    .width(80.dp),
+                onClick = { switchMode() },
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(2.dp, color = Color.Black),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+            ) {
+                Text(text = viewModel.getModeTip())
+            }
         }
-        var password by remember {
-            mutableStateOf(loginPassword)
-        }
+    }
+
+    @Composable
+    fun InputBox() {
         Column {
             TextField(
-                value = email,
+                value = viewModel.email,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { str ->
-                    email = str
-                    loginEmail = str
+                    viewModel.email = str
                 },
                 placeholder = { Text("请输入邮箱") },
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Email, contentDescription = null)
                 }
             )
+            if (viewModel.loginMode == LoginMode.Sign) {
+                TextField(
+                    value = viewModel.nickname,
+                    modifier = Modifier.fillMaxWidth(),
+                    onValueChange = { str ->
+                        viewModel.nickname = str
+                    },
+                    placeholder = { Text("请输入昵称") },
+                    leadingIcon = {
+                        Icon(imageVector = Icons.Default.Person, contentDescription = null)
+                    }
+                )
+            }
             TextField(
-                value = password,
+                value = viewModel.password,
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = {str ->
-                    password = str
-                    loginPassword = str
+                    viewModel.password = str
                 },
                 placeholder = { Text("请输入密码") },
                 leadingIcon = {
@@ -114,47 +137,69 @@ class LoginActivity : ComponentActivity() {
     }
 
     @Composable
-    fun LoginButton() {
+    fun ActionButton() {
         Button(
             modifier = Modifier.fillMaxWidth(),
-            onClick = { login() },
-            shape = RoundedCornerShape(50)
+            onClick = { 
+                if (viewModel.loginMode == LoginMode.Login) login() else signUp()
+                      },
+            shape = RoundedCornerShape(50),
+            border = BorderStroke(2.dp, color = Color.Black),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
         ) {
-            Text(text = "登录", color = Color.White, fontSize = 18.sp)
+            Text(text = viewModel.getActionTip(), color = Color.Black, fontSize = 18.sp)
         }
     }
 
-    @Composable
-    fun LoginResultArea() {
-        Box(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp)
-                .background(color = Color.Yellow),
-        ) {
-            Text(text = loginResult.value)
+    private fun switchMode() {
+        if (viewModel.loginMode == LoginMode.Login) {
+            viewModel.loginMode = LoginMode.Sign
+        } else {
+            viewModel.loginMode = LoginMode.Login
         }
     }
 
     private fun login() {
-        LoginService.getService().loginByEmail(loginEmail, loginPassword)
-            .enqueue(object: Callback<Result<LoginResult>> {
+        LoginHelper.login(viewModel.email, viewModel.password, object : LoginHelper.LoginResponse {
+            override fun onSuccess(loginVO: LoginVO?) {
+                SharedPrefUtil.setUserIdCache(loginVO?.user?.userId ?: "")
+                SharedPrefUtil.setUserTokenCache(loginVO?.token ?: "")
+                ServiceCreator.refreshToken(loginVO?.token ?: "")
+                RouterUtil.gotoMainPage()
+                ToastUtil.show("登陆成功！")
+            }
 
-                override fun onResponse(
-                    call: Call<Result<LoginResult>>,
-                    response: Response<Result<LoginResult>>
-                ) {
-                    loginResult.value = "success! info: \n  ${response.body()?.data.toString()}"
-                    runOnUiThread {
-                        Toast.makeText(this@LoginActivity, "登陆成功！", Toast.LENGTH_SHORT).show()
+            override fun onError(message: String?) {
+                ToastUtil.show(message ?: "服务器异常")
+            }
+
+            override fun onFail(t: Throwable?) {
+                ToastUtil.show("登陆失败！")
+            }
+
+        })
+    }
+
+    private fun signUp() {
+        LoginHelper.signUp(viewModel.email, viewModel.nickname, viewModel.password,
+            object : LoginHelper.LoginResponse {
+                override fun onSuccess(loginVO: LoginVO?) {
+                    ToastUtil.show("注册成功，请登录")
+                    if (viewModel.loginMode == LoginMode.Sign) {
+                        switchMode()
                     }
                 }
 
-                override fun onFailure(call: Call<Result<LoginResult>>, t: Throwable) {
-                    loginResult.value = "errors $t in ${call.request()}"
-                    Log.e(TAG, "login failed! Return: $call")
+                override fun onError(message: String?) {
+
+                }
+
+                override fun onFail(t: Throwable?) {
+                    ToastUtil.show("注册失败，请重试")
                 }
 
             })
+
     }
 
 }

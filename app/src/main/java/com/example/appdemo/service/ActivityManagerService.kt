@@ -16,7 +16,10 @@ object ActivityManagerService: Application.ActivityLifecycleCallbacks {
 
     fun init() { }
 
+    @JvmStatic
     fun getTopActivity(): WeakReference<Activity>? {
+        Log.d("ActivityManagerService", "current top activity: ${topActivity?.get().toString()}")
+
         return topActivity
     }
 

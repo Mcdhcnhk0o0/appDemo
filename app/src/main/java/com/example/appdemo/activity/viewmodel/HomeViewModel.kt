@@ -22,6 +22,18 @@ data class NavigationItemModel(
 
 class HomeViewModel: ViewModel() {
 
+    var debugMode by mutableStateOf(false)
+
+    var needRefresh by mutableStateOf(false)
+
     var selectedTabModel by mutableStateOf(NavigationItemModel())
+
+    fun getDebugModeDescription(): String {
+        return if (debugMode) {
+            "处于本地调试模式"
+        } else {
+            "处于远程调试模式"
+        }
+    }
 
 }

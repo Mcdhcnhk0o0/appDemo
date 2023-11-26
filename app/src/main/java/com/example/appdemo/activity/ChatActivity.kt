@@ -42,18 +42,16 @@ class ChatActivity: ComponentActivity(), WebSocketMessageListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppDemoTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.LightGray
-                ) {
-                    Column {
-                        ChatPage()
-                        Spacer(modifier = Modifier.height(50.dp))
-                        EditMessageBox()
-                        Spacer(modifier = Modifier.height(20.dp))
-                        SendButton()
-                    }
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color.LightGray
+            ) {
+                Column {
+                    ChatPage()
+                    Spacer(modifier = Modifier.height(50.dp))
+                    EditMessageBox()
+                    Spacer(modifier = Modifier.height(20.dp))
+                    SendButton()
                 }
             }
         }

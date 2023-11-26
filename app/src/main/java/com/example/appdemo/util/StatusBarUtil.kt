@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.OnApplyWindowInsetsListener
 import androidx.core.view.ViewCompat
@@ -53,6 +54,14 @@ object StatusBarUtil: OnApplyWindowInsetsListener {
         }
     }
 
+    fun transparentStatusBar(window: Window){
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = Color.Transparent.value.toInt()
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+    }
+
+
     private fun px2Dp(px: Int): Int {
         val currentActivity = ActivityManagerService.getTopActivity()
         val density = currentActivity?.get()?.resources?.displayMetrics?.density ?: 2.0f
@@ -64,6 +73,7 @@ object StatusBarUtil: OnApplyWindowInsetsListener {
         if (currentActivity != null && currentActivity.get() is Activity) {
             return currentActivity.get()!!.window
         }
+        Log.e("StatusBarUtil", "fail to get current window!!")
         return null
     }
 

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.appdemo.R;
+import com.example.appdemo.util.StatusBarUtil;
 import com.example.router.annotation.Router;
 
 @Router(url = "native://java_native", description = "路由测试")
@@ -14,5 +15,6 @@ public class JavaRouterTestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_java_router_test);
+        StatusBarUtil.INSTANCE.transparentStatusBar(getWindow());
     }
 }
