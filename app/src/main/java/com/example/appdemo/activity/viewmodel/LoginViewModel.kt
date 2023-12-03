@@ -14,9 +14,9 @@ class LoginViewModel: ViewModel() {
 
     var loginMode by mutableStateOf(LoginMode.Login)
 
-    var email by mutableStateOf("")
+    var email by mutableStateOf("wqqduan@123")
     var nickname by mutableStateOf("")
-    var password by mutableStateOf("")
+    var password by mutableStateOf("123456")
 
     fun getModeTip(): String = if (loginMode == LoginMode.Login) "去注册" else "去登录"
 

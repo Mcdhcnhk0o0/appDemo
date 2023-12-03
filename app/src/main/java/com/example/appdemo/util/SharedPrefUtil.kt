@@ -9,13 +9,14 @@ object SharedPrefUtil {
 
     private const val USER_ID_KEY = "cached_user_id"
     private const val USER_TOKEN_KEY = "cached_user_token"
+    private const val DEBUG_ADDRESS_KEY = "debug_address"
     private const val BASE_URL_SETTING_KEY = "base_url_setting"
 
     fun getSp(): SharedPreferences {
         return ApplicationUtil.getApplicationContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
     }
 
-    private fun getStringByKey(key: String): String {
+    private fun getStringByKey(key: String, defaultValue: String = ""): String {
         return getSp().getString(key, "") ?: ""
     }
 
@@ -23,16 +24,24 @@ object SharedPrefUtil {
         return getSp().getString(BASE_URL_SETTING_KEY, "release") ?: "release"
     }
 
-    fun isInDebugMode(): Boolean {
+    fun isBaseUrlInDebugMode(): Boolean {
         return getBaseUrlSetting() == "debug"
     }
 
-    fun setDebugBaseUrl() {
+    fun applyDebugUrlSetting() {
         getSp().edit().putString(BASE_URL_SETTING_KEY, "debug").apply()
     }
 
-    fun setReleaseBaseUrl() {
+    fun applyReleaseUrlSetting() {
         getSp().edit().putString(BASE_URL_SETTING_KEY, "release").apply()
+    }
+
+    fun getDebugUrlAddress(): String {
+        return getStringByKey(DEBUG_ADDRESS_KEY, defaultValue = "http://192.168.0.102:8880/demo/")
+    }
+
+    fun setDebugUrlAddress(url: String) {
+        getSp().edit().putString(DEBUG_ADDRESS_KEY, url).apply()
     }
 
     fun getUserTokenCache(): String {

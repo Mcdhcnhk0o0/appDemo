@@ -6,9 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -40,6 +47,7 @@ class HomeFragment : Fragment() {
             initUserStatus()
             setContent {
                 Column {
+                    debugUrlInput()
                     Button(onClick = { changeEnvironment() }) {
                         Text(text = homeViewModel.getDebugModeDescription())
                     }
@@ -72,12 +80,29 @@ class HomeFragment : Fragment() {
         }
     }
 
+    @Composable
+    fun debugUrlInput() {
+        Row {
+            TextField(
+                value = homeViewModel.debugUrl,
+                modifier = Modifier.fillMaxWidth(),
+                onValueChange = { str ->
+                    homeViewModel.debugUrl = str
+                },
+                placeholder = { Text("默认192.168.0.102，本地调试下生效") },
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Create, contentDescription = null)
+                }
+            )
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
     }
 
     private fun initUserStatus() {
-        homeViewModel.debugMode = SharedPrefUtil.isInDebugMode()
+        homeViewModel.debugMode = SharedPrefUtil.isBaseUrlInDebugMode()
         userViewModel.loginStatus = UserInfoUtil.getUserToken().isNotBlank() and UserInfoUtil.getUserId().isNotBlank()
         if (!userViewModel.loginStatus) {
             return
@@ -100,9 +125,12 @@ class HomeFragment : Fragment() {
     private fun changeEnvironment() {
         homeViewModel.debugMode = !homeViewModel.debugMode
         if (homeViewModel.debugMode) {
-            SharedPrefUtil.setDebugBaseUrl()
+            if (homeViewModel.debugUrl.isNotBlank()) {
+                ServiceCreator.refreshDebugUrl(homeViewModel.debugUrl)
+            }
+            SharedPrefUtil.applyDebugUrlSetting()
         } else {
-            SharedPrefUtil.setReleaseBaseUrl()
+            SharedPrefUtil.applyReleaseUrlSetting()
         }
         ServiceCreator.refreshToken(UserInfoUtil.getUserToken())
     }

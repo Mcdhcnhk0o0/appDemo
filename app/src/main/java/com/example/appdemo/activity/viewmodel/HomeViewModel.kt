@@ -22,6 +22,8 @@ data class NavigationItemModel(
 
 class HomeViewModel: ViewModel() {
 
+    var debugUrl by mutableStateOf("")
+
     var debugMode by mutableStateOf(false)
 
     var needRefresh by mutableStateOf(false)
@@ -30,9 +32,9 @@ class HomeViewModel: ViewModel() {
 
     fun getDebugModeDescription(): String {
         return if (debugMode) {
-            "处于本地调试模式"
+            "处于本地调试模式，点击后切换至远程调试"
         } else {
-            "处于远程调试模式"
+            "处于远程调试模式，点击后切换至本地调试"
         }
     }
 

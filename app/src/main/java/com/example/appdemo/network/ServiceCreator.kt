@@ -13,32 +13,42 @@ object ServiceCreator {
 
     private const val TAG = "HttpDebugLogger"
 
-    private const val localBaseUrl = "http://192.168.0.102:8880/demo/"
-
     private const val remoteBaseUrl = "http://123.249.16.84:8880/demo/"
 
-    private val defaultHttpClient: OkHttpClient =
-        buildHttpClientWithToken(SharedPrefUtil.getUserTokenCache())
+    private const val defaultLocalBaseUrl = "http://192.168.0.102:8880/demo/"
+
+    private var localBaseUrl = defaultLocalBaseUrl
 
     private var retrofit: Retrofit? = null
+
+    private var cachedHttpClient: OkHttpClient =
+        buildHttpClientWithToken(SharedPrefUtil.getUserTokenCache())
 
     @JvmStatic
     @Synchronized
     fun <T> create(serviceClass: Class<T>): T {
         if (retrofit == null) {
-            retrofit = getRetrofit(getBaseUrl(), defaultHttpClient)
+            retrofit = getRetrofit(getBaseUrl(), cachedHttpClient)
         }
         return retrofit!!.create(serviceClass)
     }
 
     @JvmStatic
     fun refreshToken(token: String) {
-        val newHttpClient = buildHttpClientWithToken(token)
+        cachedHttpClient = buildHttpClientWithToken(token)
         Log.d(TAG, "token is refreshed!")
         Log.d(TAG, "current token: $token")
         Log.d(TAG, "current userId: ${SharedPrefUtil.getUserIdCache()}")
         Log.d(TAG, "current request mode: ${SharedPrefUtil.getBaseUrlSetting()}")
-        retrofit = getRetrofit(getBaseUrl(), newHttpClient)
+        retrofit = getRetrofit(getBaseUrl(), cachedHttpClient)
+    }
+
+    @JvmStatic
+    fun refreshDebugUrl(url: String) {
+        val newDebugUrl = "http://${url}:8880/demo/"
+        SharedPrefUtil.setDebugUrlAddress(newDebugUrl)
+        localBaseUrl = newDebugUrl
+        retrofit = getRetrofit(newDebugUrl, cachedHttpClient)
     }
 
     @JvmStatic
@@ -69,11 +79,18 @@ object ServiceCreator {
             .build()
     }
 
+    private fun getDebugUrl(): String {
+        if (SharedPrefUtil.getDebugUrlAddress().isBlank()) {
+            return defaultLocalBaseUrl
+        }
+        return SharedPrefUtil.getDebugUrlAddress()
+    }
+
     private fun getBaseUrl(): String {
-        var baseUrl = remoteBaseUrl
-        val baseUrlConfig = SharedPrefUtil.getBaseUrlSetting()
-        if (baseUrlConfig == "debug") {
-            baseUrl = localBaseUrl
+        val baseUrl = when (SharedPrefUtil.getBaseUrlSetting()) {
+            "debug" -> localBaseUrl
+            "release" -> remoteBaseUrl
+            else -> remoteBaseUrl
         }
         return baseUrl
     }
