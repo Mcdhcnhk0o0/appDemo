@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.appdemo.activity.viewmodel.HomeViewModel
 import com.example.appdemo.network.ServiceCreator
+import com.example.appdemo.network.helper.AbstractApiHelper.ApiResponse
 import com.example.appdemo.network.helper.UserInfoHelper
 import com.example.appdemo.pojo.vo.UserInfoVO
 import com.example.appdemo.util.SharedPrefUtil
@@ -32,6 +33,8 @@ import com.example.appdemo.util.UserInfoUtil
 
 
 class HomeFragment : Fragment() {
+
+    private val userInfoHelper = UserInfoHelper()
 
     private val homeViewModel by viewModels<HomeViewModel>()
 
@@ -107,12 +110,9 @@ class HomeFragment : Fragment() {
         if (!userViewModel.loginStatus) {
             return
         }
-        UserInfoHelper.getUserInfo(UserInfoUtil.getUserId(), object : UserInfoHelper.UserInfoResponse {
+        userInfoHelper.getUserInfo(UserInfoUtil.getUserId(), object : ApiResponse<UserInfoVO> {
             override fun onSuccess(userInfoVO: UserInfoVO?) {
                 userViewModel.loginUserModel = userInfoVO!!
-            }
-
-            override fun onError(message: String?) {
             }
 
             override fun onFail(t: Throwable?) {

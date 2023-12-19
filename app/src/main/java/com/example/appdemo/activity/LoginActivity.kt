@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.example.appdemo.activity.viewmodel.LoginMode
 import com.example.appdemo.activity.viewmodel.LoginViewModel
 import com.example.appdemo.network.ServiceCreator
+import com.example.appdemo.network.helper.AbstractApiHelper
 import com.example.appdemo.network.helper.LoginHelper
 import com.example.appdemo.pojo.vo.LoginVO
 import com.example.appdemo.util.RouterUtil
@@ -42,6 +43,8 @@ class LoginActivity : ComponentActivity() {
     companion object {
         private const val TAG = "LoginActivity"
     }
+
+    private val loginHelper = LoginHelper()
 
     private val viewModel by viewModels<LoginViewModel>()
 
@@ -160,29 +163,33 @@ class LoginActivity : ComponentActivity() {
     }
 
     private fun login() {
-        LoginHelper.login(viewModel.email, viewModel.password, object : LoginHelper.LoginResponse {
-            override fun onSuccess(loginVO: LoginVO?) {
-                SharedPrefUtil.setUserIdCache(loginVO?.user?.userId ?: "")
-                SharedPrefUtil.setUserTokenCache(loginVO?.token ?: "")
-                ServiceCreator.refreshToken(loginVO?.token ?: "")
-                RouterUtil.gotoMainPage()
-                ToastUtil.show("登陆成功！")
-            }
+        loginHelper.login(viewModel.email, viewModel.password,
+            object : AbstractApiHelper.ApiResponse<LoginVO> {
 
-            override fun onError(message: String?) {
-                ToastUtil.show(message ?: "服务器异常")
-            }
+                override fun onSuccess(loginVO: LoginVO?) {
+                    SharedPrefUtil.setUserIdCache(loginVO?.user?.userId ?: "")
+                    SharedPrefUtil.setUserTokenCache(loginVO?.token ?: "")
+                    ServiceCreator.refreshToken(loginVO?.token ?: "")
+                    RouterUtil.gotoMainPage()
+                    ToastUtil.show("登陆成功！")
+                }
 
-            override fun onFail(t: Throwable?) {
-                ToastUtil.show("登陆失败！")
-            }
+                override fun onError(message: String?) {
+                    ToastUtil.show(message ?: "服务器异常")
+                }
 
-        })
+                override fun onFail(t: Throwable?) {
+                    ToastUtil.show("登陆失败！")
+                }
+
+            }
+        )
     }
 
     private fun signUp() {
-        LoginHelper.signUp(viewModel.email, viewModel.nickname, viewModel.password,
-            object : LoginHelper.LoginResponse {
+        loginHelper.signUp(viewModel.email, viewModel.nickname, viewModel.password,
+            object : AbstractApiHelper.ApiResponse<LoginVO> {
+
                 override fun onSuccess(loginVO: LoginVO?) {
                     ToastUtil.show("注册成功，请登录")
                     if (viewModel.loginMode == LoginMode.Sign) {

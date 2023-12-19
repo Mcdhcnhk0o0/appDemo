@@ -1,6 +1,6 @@
 package com.example.appdemo.network.response;
 
-public class Result<T> {
+public class ApiResult<T> {
 
     private int code;
     private String message;
