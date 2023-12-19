@@ -18,7 +18,7 @@ class ChatHelper: AbstractApiHelper<ChatServiceApi>() {
         bindResponse(withService().sendQuery(query), llmResponse)
     }
 
-    fun getChatHistory(userId: String, pageNum: Int, pageSize: Int, llmResponse: ApiResponse<ChatHistoryVO>) {
+    fun getChatHistory(userId: String, pageNum: Int, pageSize: Int, llmResponse: ApiResponse<List<ChatHistoryVO>>) {
         bindResponse(withService().getChatHistory(userId, pageNum, pageSize), llmResponse)
     }
 

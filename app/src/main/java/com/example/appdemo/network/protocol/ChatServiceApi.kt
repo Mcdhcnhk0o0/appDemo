@@ -22,6 +22,6 @@ interface ChatServiceApi {
         @Query("userId") userId: String,
         @Query("pageNum") pageNum: Int,
         @Query("pageSize") pageSize: Int
-    ): Call<ApiResult<ChatHistoryVO>>
+    ): Call<ApiResult<List<ChatHistoryVO>>>
 
 }
