@@ -37,9 +37,16 @@ public abstract class AbstractApiHelper<S> {
     }
 
     protected <V> void bindResponse(Call<ApiResult<V>> call, AbstractApiHelper.ApiResponse<V> apiResponse) {
+        if (call == null) {
+            throw new RuntimeException("cannot bind a null reference!");
+        }
         call.enqueue(new Callback<ApiResult<V>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResult<V>> call, @NonNull Response<ApiResult<V>> response) {
+                if (apiResponse == null) {
+                    Log.d(TAG, "response of " + call.request().url() + " is ignored");
+                    return;
+                }
                 if (response.body() != null && response.body().getData() != null) {
                     apiResponse.onSuccess(response.body().getData());
                 } else {
@@ -49,7 +56,7 @@ public abstract class AbstractApiHelper<S> {
 
             @Override
             public void onFailure(@NonNull Call<ApiResult<V>> call, @NonNull Throwable t) {
-                Log.e("AbstractApiHelper", "error: " + t + " in " + call.request().url());
+                Log.e(TAG, "error: " + t + " in " + call.request().url());
                 apiResponse.onFail(t);
             }
         });

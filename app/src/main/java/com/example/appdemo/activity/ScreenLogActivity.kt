@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -25,10 +27,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.room.Room.databaseBuilder
+import com.example.appdemo.activity.viewmodel.ScreenLogViewModel
 import com.example.appdemo.database.ScreenStatusRecordDatabase
 import com.example.appdemo.database.entity.ScreenState
 import com.example.appdemo.database.entity.ScreenStatusBean
+import com.example.appdemo.network.helper.AbstractApiHelper.ApiResponse
+import com.example.appdemo.network.helper.TrackHelper
+import com.example.appdemo.pojo.dao.TrackEvent
 import com.example.appdemo.ui.theme.AppDemoTheme
+import com.example.appdemo.util.TrackUtil
 import com.example.router.annotation.Router
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -37,6 +44,10 @@ import java.util.Locale
 
 @Router(url = "native://screen_log", description = "屏幕监控")
 class ScreenLogActivity: ComponentActivity() {
+
+    private val trackHelper = TrackHelper()
+
+    private val screenViewModel by viewModels<ScreenLogViewModel>()
 
     private val screenRecordList = mutableStateListOf<ScreenStatusBean>()
 
@@ -55,6 +66,9 @@ class ScreenLogActivity: ComponentActivity() {
                             .fillMaxHeight()
                             .padding(vertical = 12.dp, horizontal = 12.dp),
                     ) {
+                        Button(onClick = { getScreenLogFromServer() }) {
+                            Text(text = "从服务器拉取日志")
+                        }
                         ScreenLogGroupPage()
                     }
                 }
@@ -64,7 +78,7 @@ class ScreenLogActivity: ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        getScreenLogAsync()
+//        getScreenLogAsync()
     }
 
     @Composable
@@ -95,9 +109,9 @@ class ScreenLogActivity: ComponentActivity() {
                     modifier = Modifier
                         .padding(20.dp)
                         .background(
-                        color = Color.DarkGray,
-                        shape = RoundedCornerShape(12.dp)
-                    )
+                            color = Color.DarkGray,
+                            shape = RoundedCornerShape(12.dp)
+                        )
                         .padding(vertical = 20.dp)
                 ) {
                     LogGroupItem(records = recordGroup)
@@ -163,6 +177,22 @@ class ScreenLogActivity: ComponentActivity() {
         }
 
 
+    }
+
+    private fun getScreenLogFromServer() {
+        trackHelper.getRecentTrackEvents(
+            screenViewModel.screenEventType,
+            screenViewModel.pageNum,
+            screenViewModel.pageSize
+        ) { events ->
+            screenViewModel.pageNum++
+            events.forEach { event ->
+                val bean = ScreenStatusBean()
+                bean.state = TrackUtil.getScreenStateFromTrackEvent(event)
+                bean.timeStamp = event.localTimestamp?.toLong()
+                screenRecordList.add(bean)
+            }
+        }
     }
 
     private fun getScreenLogAsync() {

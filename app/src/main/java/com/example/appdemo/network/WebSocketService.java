@@ -3,7 +3,7 @@ package com.example.appdemo.network;
 import android.util.Log;
 
 import com.example.appdemo.BuildConfig;
-import com.example.appdemo.network.protocol.WebSocketMessageListener;
+import com.example.appdemo.network.protocol.WebSocketApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class WebSocketService extends WebSocketListener {
 
     private WebSocket webSocket;
 
-    private final List<WebSocketMessageListener> messageListeners = new ArrayList<>();
+    private final List<WebSocketApi> messageListeners = new ArrayList<>();
 
     private WebSocketService() {
         createWebSocket();
@@ -84,7 +84,7 @@ public class WebSocketService extends WebSocketListener {
         return webSocket.send(message);
     }
 
-    public void addMessageListener(WebSocketMessageListener listener) {
+    public void addMessageListener(WebSocketApi listener) {
         messageListeners.add(listener);
     }
 

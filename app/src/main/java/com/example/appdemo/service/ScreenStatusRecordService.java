@@ -27,12 +27,18 @@ import com.example.appdemo.database.ScreenStatusRecordDatabase;
 import com.example.appdemo.database.dao.ScreenStatusDao;
 import com.example.appdemo.database.entity.ScreenState;
 import com.example.appdemo.database.entity.ScreenStatusBean;
+import com.example.appdemo.network.helper.TrackHelper;
+import com.example.appdemo.pojo.dao.TrackEvent;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ScreenStatusRecordService extends Service implements ScreenStatusListener {
 
     private static final String TAG = ScreenStatusRecordService.class.getSimpleName();
+
+    private final TrackHelper trackHelper = new TrackHelper();
 
     private ScreenStatusRecordDatabase recordDatabase;
 
@@ -90,6 +96,7 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
     public void onScreenOn() {
         ScreenStatusBean record = generateRecord(ScreenState.SCREEN_ON);
         appendRecord(record);
+        sendTrackEvent(record);
         Log.d(TAG, "screen is On");
         butIWantToReborn();
     }
@@ -98,6 +105,7 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
     public void onScreenOff() {
         ScreenStatusBean record = generateRecord(ScreenState.SCREEN_OFF);
         appendRecord(record);
+        sendTrackEvent(record);
         Log.d(TAG, "screen is Off");
     }
 
@@ -105,6 +113,7 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
     public void onUserPresent() {
         ScreenStatusBean record = generateRecord(ScreenState.USER_PRESENT);
         appendRecord(record);
+        sendTrackEvent(record);
         Log.d(TAG, "user unlock the screen");
     }
 
@@ -146,6 +155,17 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
         } else {
             Log.e(TAG, "database screen_db is *not* initialized!");
         }
+    }
+
+    private void sendTrackEvent(ScreenStatusBean record) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", record.state);
+        TrackEvent event = new TrackEvent.Companion.Builder()
+                .eventType(90001)
+                .eventCode("screen_record")
+                .body(body)
+                .build();
+        trackHelper.uploadTrackEvent(event);
     }
 
     private String createNotificationChannel(String channelId, String channelName) {

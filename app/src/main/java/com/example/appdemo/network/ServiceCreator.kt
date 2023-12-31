@@ -17,8 +17,6 @@ object ServiceCreator {
 
     private const val defaultLocalBaseUrl = "http://192.168.0.102:8880/demo/"
 
-    private var localBaseUrl = defaultLocalBaseUrl
-
     private var retrofit: Retrofit? = null
 
     private var cachedHttpClient: OkHttpClient =
@@ -44,11 +42,12 @@ object ServiceCreator {
     }
 
     @JvmStatic
-    fun refreshDebugUrl(url: String) {
+    fun refreshDebugUrl(url: String, needApply: Boolean) {
         val newDebugUrl = "http://${url}:8880/demo/"
         SharedPrefUtil.setDebugUrlAddress(newDebugUrl)
-        localBaseUrl = newDebugUrl
-        retrofit = getRetrofit(newDebugUrl, cachedHttpClient)
+        if (needApply) {
+            retrofit = getRetrofit(newDebugUrl, cachedHttpClient)
+        }
     }
 
     @JvmStatic
@@ -88,7 +87,7 @@ object ServiceCreator {
 
     private fun getBaseUrl(): String {
         val baseUrl = when (SharedPrefUtil.getBaseUrlSetting()) {
-            "debug" -> localBaseUrl
+            "debug" -> getDebugUrl()
             "release" -> remoteBaseUrl
             else -> remoteBaseUrl
         }

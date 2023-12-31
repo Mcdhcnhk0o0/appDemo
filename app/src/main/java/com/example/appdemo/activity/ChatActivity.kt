@@ -26,15 +26,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.appdemo.network.WebSocketService
-import com.example.appdemo.network.protocol.WebSocketMessageListener
-import com.example.appdemo.ui.theme.AppDemoTheme
+import com.example.appdemo.network.protocol.WebSocketApi
 import com.example.router.annotation.Router
 
 
 data class ChatModel(val message: String, val fromServer: Boolean)
 
 @Router(url = "native://chat", description = "远程聊天")
-class ChatActivity: ComponentActivity(), WebSocketMessageListener {
+class ChatActivity: ComponentActivity(), WebSocketApi {
 
     private val localMessage = mutableStateOf("")
 

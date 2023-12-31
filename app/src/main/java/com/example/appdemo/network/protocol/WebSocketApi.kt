@@ -1,6 +1,6 @@
 package com.example.appdemo.network.protocol
 
-interface WebSocketMessageListener {
+interface WebSocketApi {
 
     fun onMessage(message: String)
 

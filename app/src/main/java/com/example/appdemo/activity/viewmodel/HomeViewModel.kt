@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
+import com.example.appdemo.util.SharedPrefUtil
 
 
 data class NavigationItemModel(
@@ -22,7 +23,9 @@ data class NavigationItemModel(
 
 class HomeViewModel: ViewModel() {
 
-    var debugUrl by mutableStateOf("")
+    var debugAddress by mutableStateOf("")
+
+    var debugUrl by mutableStateOf(SharedPrefUtil.getDebugUrlAddress())
 
     var debugMode by mutableStateOf(false)
 
@@ -32,9 +35,9 @@ class HomeViewModel: ViewModel() {
 
     fun getDebugModeDescription(): String {
         return if (debugMode) {
-            "处于本地调试模式，点击后切换至远程调试"
+            "处于本地调试模式"
         } else {
-            "处于远程调试模式，点击后切换至本地调试"
+            "处于远程调试模式"
         }
     }
 
