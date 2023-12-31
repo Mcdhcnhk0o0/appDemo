@@ -1,5 +1,7 @@
 package com.example.appdemo.activity
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -34,6 +36,7 @@ import com.example.appdemo.database.entity.ScreenStatusBean
 import com.example.appdemo.network.helper.AbstractApiHelper.ApiResponse
 import com.example.appdemo.network.helper.TrackHelper
 import com.example.appdemo.pojo.dao.TrackEvent
+import com.example.appdemo.service.ScreenStatusRecordService
 import com.example.appdemo.ui.theme.AppDemoTheme
 import com.example.appdemo.util.TrackUtil
 import com.example.router.annotation.Router
@@ -70,6 +73,9 @@ class ScreenLogActivity: ComponentActivity() {
                             Text(text = "从服务器拉取日志")
                         }
                         ScreenLogGroupPage()
+                        Button(onClick = { startForegroundRecord() }) {
+                            Text(text = "监控，启动！")
+                        }
                     }
                 }
             }
@@ -192,6 +198,15 @@ class ScreenLogActivity: ComponentActivity() {
                 bean.timeStamp = event.localTimestamp?.toLong()
                 screenRecordList.add(bean)
             }
+        }
+    }
+
+    private fun startForegroundRecord() {
+        val intent = Intent(this, ScreenStatusRecordService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(intent)
+        } else {
+            startService(intent)
         }
     }
 

@@ -66,7 +66,7 @@ public class ScreenStatusRecordService extends Service implements ScreenStatusLi
                 .setPriority(PRIORITY_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
-        startForeground(1, notification);
+        startForeground(90001, notification);
         initDatabaseAsync();
         ListenerProxy.INSTANCE.addScreenStatusListener(this);
         Log.d(TAG, "service created!");
