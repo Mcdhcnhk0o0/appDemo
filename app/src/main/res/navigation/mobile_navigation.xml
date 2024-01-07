@@ -12,11 +12,11 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.appdemo.activity.home.ui.dashboard.DashboardFragment"
+        android:name="com.example.appdemo.activity.home.ui.content.ContentFragment"
         android:label="@string/title_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.appdemo.activity.home.ui.notifications.NotificationsFragment"
+        android:name="com.example.appdemo.activity.home.ui.mine.MineFragment"
         android:label="@string/title_notifications" />
 </navigation>

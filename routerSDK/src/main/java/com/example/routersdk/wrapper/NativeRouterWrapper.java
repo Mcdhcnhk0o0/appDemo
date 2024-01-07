@@ -1,11 +1,11 @@
-package com.example.appdemo.router.wrapper;
+package com.example.routersdk.wrapper;
 
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.appdemo.router.protocol.IRouter;
-import com.example.appdemo.router.protocol.IRouterInterceptor;
 import com.example.router.RouterManager;
+import com.example.routersdk.protocol.IRouter;
+import com.example.routersdk.protocol.IRouterInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collections;

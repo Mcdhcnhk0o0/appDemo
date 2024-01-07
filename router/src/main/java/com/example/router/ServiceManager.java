@@ -47,31 +47,27 @@ public class ServiceManager {
         return methodMap.get(serviceClassName);
     }
 
-    public String callService(String service, String method, List<Class<?>> paramTypes, List<Object> paramsValues) {
-        JSONObject result = new JSONObject();
-        try {
-            Class<?> clazz = Class.forName(serviceMap.get(service));
-            Object instance = clazz.getConstructor().newInstance();
-            Method targetMethod = clazz.getMethod(method, list2Array(paramTypes));
-            Object methodResult = targetMethod.invoke(instance, list2Array(paramsValues));
-            result.put("success", true);
-            result.put("result", JSON.toJSONString(methodResult));
-        } catch (Exception e) {
-            result.put("success", true);
-            result.put("result", JSON.toJSONString(e));
-        }
-        return JSON.toJSONString(result);
+    public Map<String, Object> callService(String service, String method) {
+        return callService(service, method, new Class[0], new Object[0]);
     }
 
-    private static <T> T[] list2Array(List<T> data) {
-        if (data == null || data.size() == 0) {
-            return (T[]) new Object[0];
+    public Map<String, Object> callService(String service, String method, Class<?>[] paramTypes, Object[] paramsValues) {
+        Map<String, Object> result = new HashMap<>();
+        try {
+            if (serviceMap.containsKey(service)) {
+                service = serviceMap.get(service);
+            }
+            Class<?> clazz = Class.forName(service);
+            Object instance = clazz.getConstructor().newInstance();
+            Method targetMethod = clazz.getMethod(method, paramTypes);
+            Object methodResult = targetMethod.invoke(instance, paramsValues);
+            result.put("success", true);
+            result.put("result", methodResult);
+        } catch (Exception e) {
+            result.put("success", false);
+            result.put("result", e);
         }
-        T[] array = (T[]) new Object[data.size()];
-        for (int i = 0; i < data.size(); i++) {
-            array[i] = data.get(i);
-        }
-        return array;
+        return result;
     }
 
     private static final class InnerClass {

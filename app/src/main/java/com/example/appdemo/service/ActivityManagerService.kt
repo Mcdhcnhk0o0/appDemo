@@ -4,8 +4,11 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.util.Log
+import com.example.router.annotation.Service
+import com.example.router.annotation.ServiceMethod
 import java.lang.ref.WeakReference
 
+@Service(name = "activity")
 object ActivityManagerService: Application.ActivityLifecycleCallbacks {
 
     private var isBackground = false
@@ -17,6 +20,7 @@ object ActivityManagerService: Application.ActivityLifecycleCallbacks {
     fun init() { }
 
     @JvmStatic
+    @ServiceMethod
     fun getTopActivity(): WeakReference<Activity>? {
         Log.d("ActivityManagerService", "current top activity: ${topActivity?.get().toString()}")
 

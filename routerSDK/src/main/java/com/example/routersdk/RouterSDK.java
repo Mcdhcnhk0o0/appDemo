@@ -1,29 +1,26 @@
-package com.example.appdemo.router;
+package com.example.routersdk;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.example.appdemo.router.protocol.IRouter;
-import com.example.appdemo.router.wrapper.FlutterRouterWrapper;
-import com.example.appdemo.router.wrapper.NativeRouterWrapper;
-import com.example.appdemo.service.ActivityManagerService;
 import com.example.router.RouterProcessor;
+import com.example.routersdk.protocol.IRouter;
+import com.example.routersdk.wrapper.NativeRouterWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class OneRouter implements IRouter {
+public final class RouterSDK implements IRouter {
 
-    private static final String TAG = OneRouter.class.getSimpleName();
+    private static final String TAG = RouterSDK.class.getSimpleName();
 
     private final List<IRouter> routers = new ArrayList<>();
 
-    private OneRouter() {
+    private RouterSDK() {
         routers.add(NativeRouterWrapper.getInstance());
-        routers.add(FlutterRouterWrapper.getInstance());
     }
 
-    public static OneRouter getInstance() {
+    public static RouterSDK getInstance() {
         return InnerClass.instance;
     }
 
@@ -56,14 +53,14 @@ public final class OneRouter implements IRouter {
     }
 
     private Context getTopActivity() {
-        if (ActivityManagerService.getTopActivity() != null) {
-            return ActivityManagerService.getTopActivity().get();
-        }
+//        if (ActivityManagerService.getTopActivity() != null) {
+//            return ActivityManagerService.getTopActivity().get();
+//        }
         return null;
     }
 
     private static final class InnerClass {
-        private static final OneRouter instance = new OneRouter();
+        private static final RouterSDK instance = new RouterSDK();
     }
 
 }

@@ -32,3 +32,4 @@ include ":app"
 include ":app_flutter"
 include ':router'
 include ':home'
+include ':routerSDK'

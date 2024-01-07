@@ -1,4 +1,4 @@
-package com.example.appdemo.activity.home.ui.dashboard
+package com.example.appdemo.activity.home.ui.content
 
 import android.net.Uri
 import android.os.Bundle
@@ -6,11 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +29,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.toUpperCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,7 +42,7 @@ data class RouterModel(val name: String, val url: String, val description: Strin
 
 
 
-class DashboardFragment : Fragment() {
+class ContentFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
