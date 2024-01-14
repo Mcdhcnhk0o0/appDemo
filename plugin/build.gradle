@@ -1,0 +1,21 @@
+plugins {
+    id("java-gradle-plugin")
+//    id("org.jetbrains.kotlin.jvm") version "1.8.10" apply false
+    id("maven-publish")
+}
+
+
+repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+dependencies {
+    implementation 'com.android.tools.build:gradle:8.1.0'
+}
