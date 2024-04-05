@@ -5,8 +5,6 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.example.appdemo.flutter.FlutterRuntimeUtil;
 import com.example.appdemo.router.OneRouter;
 import com.example.appdemo.router.protocol.IRouter;
 import com.idlefish.flutterboost.FlutterBoost;
@@ -36,7 +34,6 @@ public class FlutterRouterWrapper implements IRouter, FlutterBoostDelegate {
         }
         FlutterBoostRouteOptions routeOptions = new FlutterBoostRouteOptions.Builder()
                 .pageName(url)
-                .uniqueId(url)
                 .arguments(arguments)
                 .build();
         pushFlutterRoute(routeOptions);

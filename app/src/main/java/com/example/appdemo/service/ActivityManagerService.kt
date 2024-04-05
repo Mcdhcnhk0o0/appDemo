@@ -11,6 +11,8 @@ import java.lang.ref.WeakReference
 @Service(name = "activity")
 object ActivityManagerService: Application.ActivityLifecycleCallbacks {
 
+    private var TAG = ActivityManagerService::class.java.simpleName
+
     private var isBackground = false
 
     private var topActivity: WeakReference<Activity>? = null
@@ -22,7 +24,7 @@ object ActivityManagerService: Application.ActivityLifecycleCallbacks {
     @JvmStatic
     @ServiceMethod
     fun getTopActivity(): WeakReference<Activity>? {
-        Log.d("ActivityManagerService", "current top activity: ${topActivity?.get().toString()}")
+        Log.d(TAG, "current top activity: ${topActivity?.get().toString()}")
 
         return topActivity
     }
@@ -38,13 +40,14 @@ object ActivityManagerService: Application.ActivityLifecycleCallbacks {
     override fun onActivityStarted(activity: Activity) {
         if (activityCount == 0) {
             isBackground = false
-            Log.d("ActivityManagerService", "app onForeground")
+            Log.d(TAG, "app onForeground")
         }
         activityCount++
     }
 
     override fun onActivityResumed(activity: Activity) {
         topActivity = WeakReference(activity)
+        Log.d(TAG, "$activity is resumed")
     }
 
     override fun onActivityPaused(activity: Activity) {

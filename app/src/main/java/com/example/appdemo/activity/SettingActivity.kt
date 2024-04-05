@@ -48,6 +48,7 @@ class SettingActivity: ComponentActivity() {
 
         }
         OneRouter.getInstance().dispatch("flutter://demo1")
+        finish()
     }
 
 }
