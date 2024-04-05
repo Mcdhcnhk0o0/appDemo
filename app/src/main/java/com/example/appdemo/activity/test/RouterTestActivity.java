@@ -46,11 +46,11 @@ public class RouterTestActivity extends AppCompatActivity {
         String serviceClass = ServiceManager.getInstance().getService("application");
         List<String> serviceMethods = ServiceManager.getInstance().getMethods(serviceClass);
         for (String method: serviceMethods) {
-            Map<String, Object> res = ServiceManager.getInstance().callService(serviceClass, method);
-            remoteServiceResult.setText(res.get("result").toString());
-            if (res.get("result") instanceof Application) {
+            Object res = ServiceManager.getInstance().callService(serviceClass, method);
+            remoteServiceResult.setText(res.toString());
+            if (res instanceof Application) {
                 ToastUtil.INSTANCE.show("get application succeed!");
-            } else if (res.get("result") instanceof Activity) {
+            } else if (res instanceof Activity) {
                 ToastUtil.INSTANCE.show("get top activity succeed!");
             }
         }

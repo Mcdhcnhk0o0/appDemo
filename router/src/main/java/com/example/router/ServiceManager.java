@@ -47,12 +47,11 @@ public class ServiceManager {
         return methodMap.get(serviceClassName);
     }
 
-    public Map<String, Object> callService(String service, String method) {
+    public Object callService(String service, String method) {
         return callService(service, method, new Class[0], new Object[0]);
     }
 
-    public Map<String, Object> callService(String service, String method, Class<?>[] paramTypes, Object[] paramsValues) {
-        Map<String, Object> result = new HashMap<>();
+    public Object callService(String service, String method, Class<?>[] paramTypes, Object[] paramsValues) {
         try {
             if (serviceMap.containsKey(service)) {
                 service = serviceMap.get(service);
@@ -60,14 +59,10 @@ public class ServiceManager {
             Class<?> clazz = Class.forName(service);
             Object instance = clazz.getConstructor().newInstance();
             Method targetMethod = clazz.getMethod(method, paramTypes);
-            Object methodResult = targetMethod.invoke(instance, paramsValues);
-            result.put("success", true);
-            result.put("result", methodResult);
+            return targetMethod.invoke(instance, paramsValues);
         } catch (Exception e) {
-            result.put("success", false);
-            result.put("result", e);
+            throw new RuntimeException(e);
         }
-        return result;
     }
 
     private static final class InnerClass {

@@ -13,7 +13,7 @@ object ServiceCreator {
 
     private const val TAG = "HttpDebugLogger"
 
-    private const val remoteBaseUrl = "http://123.249.16.84:8880/demo/"
+    private const val remoteBaseUrl = "http://8.141.90.135:8880/demo/"
 
     private const val defaultLocalBaseUrl = "http://192.168.0.102:8880/demo/"
 

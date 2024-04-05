@@ -45,7 +45,7 @@ class LauncherActivity: ComponentActivity() {
     private fun gotoMainPage() {
         CoroutineScope(Dispatchers.IO).launch {
             delay(3000)
-            OneRouter.getInstance().dispatch("native://main", this@LauncherActivity)
+            OneRouter.getInstance().dispatch("native://main")
         }
     }
     

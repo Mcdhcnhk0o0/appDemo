@@ -10,6 +10,7 @@ import com.example.router.RouterManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 public class NativeRouterWrapper implements IRouter {
@@ -18,7 +19,7 @@ public class NativeRouterWrapper implements IRouter {
 
     private boolean needReSort = false;
 
-    private List<IRouterInterceptor> routerInterceptors = new ArrayList<>();
+    private final List<IRouterInterceptor> routerInterceptors = new ArrayList<>();
 
     private NativeRouterWrapper() { }
 
@@ -37,25 +38,25 @@ public class NativeRouterWrapper implements IRouter {
     }
 
     @Override
-    public boolean dispatch(String url, Context context) {
+    public boolean dispatch(Context context, String url, Map<String, String> params) {
         sortInterceptorsIfNeeded();
-        if (beforeDispatch()) {
+        if (beforeDispatch(url)) {
             return false;
         }
         Class<?> destination = RouterManager.getInstance().getClass(url);
         if (destination != null) {
             Intent intent = new Intent(context, destination);
             context.startActivity(intent);
-            afterDispatchSucceed();
+            afterDispatchSucceed(url);
             return true;
         }
-        afterDispatchFailed();
+        afterDispatchFailed(url);
         return false;
     }
 
-    private boolean beforeDispatch() {
+    private boolean beforeDispatch(String url) {
         for (IRouterInterceptor interceptor: routerInterceptors) {
-            boolean intercepted = interceptor.beforeRouterDispatch();
+            boolean intercepted = interceptor.beforeRouterDispatch(url);
             if (intercepted) {
                 return true;
             }
@@ -63,15 +64,15 @@ public class NativeRouterWrapper implements IRouter {
         return false;
     }
 
-    private void afterDispatchSucceed() {
+    private void afterDispatchSucceed(String url) {
         for (IRouterInterceptor interceptor: routerInterceptors) {
-            interceptor.afterRouterDispatchSucceed();
+            interceptor.afterRouterDispatchSucceed(url);
         }
     }
 
-    private void afterDispatchFailed() {
+    private void afterDispatchFailed(String url) {
         for (IRouterInterceptor interceptor: routerInterceptors) {
-            interceptor.afterRouterDispatchFailed();
+            interceptor.afterRouterDispatchFailed(url);
         }
     }
 

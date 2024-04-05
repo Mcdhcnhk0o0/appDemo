@@ -55,7 +55,7 @@ public class WelcomeActivity extends AppCompatActivity {
         splashExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OneRouter.getInstance().dispatch("native://main", WelcomeActivity.this);
+                OneRouter.getInstance().dispatch("native://main");
             }
         });
         timer = new CountDownTimer(3000L, 1000L) {
@@ -67,7 +67,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                OneRouter.getInstance().dispatch("native://main", WelcomeActivity.this);
+                OneRouter.getInstance().dispatch("native://main");
             }
         };
         timer.start();

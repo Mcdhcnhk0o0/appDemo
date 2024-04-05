@@ -88,7 +88,7 @@ class ContentFragment : Fragment() {
                     modifier = Modifier.pointerInput(Unit) {
                         detectTapGestures(
                             onTap = {
-                                OneRouter.getInstance().dispatch(routerList[i].url, requireContext())
+                                OneRouter.getInstance().dispatch(routerList[i].url)
                             }
                         )
                     }
@@ -135,7 +135,7 @@ class ContentFragment : Fragment() {
             routerList.forEachIndexed { i, routerModel ->
                 Button(
                     onClick = {
-                        OneRouter.getInstance().dispatch(routerModel.url, requireContext())
+                        OneRouter.getInstance().dispatch(routerModel.url)
                     },
                     modifier = Modifier
                         .padding(start = 12.dp, end = 12.dp)

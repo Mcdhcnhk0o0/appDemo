@@ -2,11 +2,11 @@ package com.example.appdemo.router.protocol;
 
 public interface IRouterInterceptor {
 
-    boolean beforeRouterDispatch();
+    boolean beforeRouterDispatch(String url);
 
-    void afterRouterDispatchSucceed();
+    void afterRouterDispatchSucceed(String url);
 
-    void afterRouterDispatchFailed();
+    void afterRouterDispatchFailed(String url);
 
     int priority();
 

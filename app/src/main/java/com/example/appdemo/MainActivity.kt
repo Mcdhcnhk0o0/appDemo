@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        OneRouter.getInstance().dispatch("native://home", this@MainActivity)
+        OneRouter.getInstance().dispatch("native://home")
         finish()
     }
 

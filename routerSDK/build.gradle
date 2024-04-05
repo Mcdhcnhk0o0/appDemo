@@ -24,16 +24,8 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    packaging {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
-    }
 }
 
 dependencies {
-
     api project(":router")
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-//    implementation 'com.google.android.material:material:1.11.0'
 }

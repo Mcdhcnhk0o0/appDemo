@@ -32,13 +32,14 @@ import com.example.appdemo.network.ServiceCreator
 import com.example.appdemo.network.helper.AbstractApiHelper
 import com.example.appdemo.network.helper.LoginHelper
 import com.example.appdemo.pojo.vo.LoginVO
+import com.example.appdemo.router.OneRouter
 import com.example.appdemo.util.RouterUtil
 import com.example.appdemo.util.SharedPrefUtil
 import com.example.appdemo.util.ToastUtil
 import com.example.router.annotation.Router
 
 
-@Router(url = "native://setting")
+@Router(url = "native://setting", description = "设置")
 class SettingActivity: ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +47,7 @@ class SettingActivity: ComponentActivity() {
         setContent {
 
         }
+        OneRouter.getInstance().dispatch("flutter://demo1")
     }
 
 }

@@ -67,7 +67,7 @@ class RouterCenterActivity : ComponentActivity() {
             routerList.forEachIndexed { i, routerModel ->
                 Button(
                     onClick = {
-                        OneRouter.getInstance().dispatch(routerModel.url, this@RouterCenterActivity)
+                        OneRouter.getInstance().dispatch(routerModel.url)
                     },
                     modifier = Modifier
                         .padding(start = 12.dp, end = 12.dp)

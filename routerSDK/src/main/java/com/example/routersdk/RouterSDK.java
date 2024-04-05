@@ -4,20 +4,27 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.router.RouterProcessor;
+import com.example.routersdk.bean.ServiceRequest;
+import com.example.routersdk.bean.ServiceResponse;
 import com.example.routersdk.protocol.IRouter;
+import com.example.routersdk.protocol.IService;
+import com.example.routersdk.wrapper.LocalServiceWrapper;
 import com.example.routersdk.wrapper.NativeRouterWrapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class RouterSDK implements IRouter {
+public final class RouterSDK implements IRouter, IService {
 
     private static final String TAG = RouterSDK.class.getSimpleName();
 
     private final List<IRouter> routers = new ArrayList<>();
 
+    private final List<IService> services = new ArrayList<>();
+
     private RouterSDK() {
         routers.add(NativeRouterWrapper.getInstance());
+        services.add(LocalServiceWrapper.getInstance());
     }
 
     public static RouterSDK getInstance() {
@@ -56,6 +63,17 @@ public final class RouterSDK implements IRouter {
 //        if (ActivityManagerService.getTopActivity() != null) {
 //            return ActivityManagerService.getTopActivity().get();
 //        }
+        return null;
+    }
+
+    @Override
+    public <T> ServiceResponse<T> call(ServiceRequest request) {
+        for (IService service: services) {
+            ServiceResponse<T> response = service.call(request);
+            if (response.isSuccess()) {
+                return response;
+            }
+        }
         return null;
     }
 

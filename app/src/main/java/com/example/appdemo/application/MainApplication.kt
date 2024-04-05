@@ -2,11 +2,16 @@ package com.example.appdemo.application
 
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import com.example.appdemo.broadcast.ScreenStatusReceiver
 import com.example.appdemo.flutter.FlutterRuntimeUtil
 import com.example.appdemo.router.OneRouter
+import com.example.appdemo.router.wrapper.FlutterRouterWrapper
 import com.example.appdemo.service.ActivityManagerService
 import com.example.appdemo.service.ScreenStatusRecordService
+import com.idlefish.flutterboost.FlutterBoost
+import com.idlefish.flutterboost.FlutterBoost.Callback
+import io.flutter.embedding.engine.FlutterEngine
 
 class MainApplication: BaseApplication() {
 
@@ -19,7 +24,13 @@ class MainApplication: BaseApplication() {
     }
 
     private fun initFlutter() {
-        FlutterRuntimeUtil.initFlutterEngineWithContext(this)
+//        FlutterRuntimeUtil.initFlutterEngineWithContext(this)
+        FlutterBoost.instance().setup(
+            this,
+            FlutterRouterWrapper.getInstance()
+        ) {
+            Log.d("FlutterEngine", "flutter engine $it is initialized")
+        }
     }
 
     private fun initRouter() {

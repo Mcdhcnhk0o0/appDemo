@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.appdemo.router.protocol.IRouter;
+import com.example.appdemo.router.protocol.IRouterInterceptor;
 import com.example.appdemo.router.wrapper.FlutterRouterWrapper;
 import com.example.appdemo.router.wrapper.NativeRouterWrapper;
 import com.example.appdemo.service.ActivityManagerService;
@@ -11,6 +12,7 @@ import com.example.router.RouterProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class OneRouter implements IRouter {
 
@@ -27,18 +29,44 @@ public final class OneRouter implements IRouter {
         return InnerClass.instance;
     }
 
-    public void init() { }
+    public void init() {
+        NativeRouterWrapper.getInstance().addRouterInterceptor(new IRouterInterceptor() {
+            @Override
+            public boolean beforeRouterDispatch(String url) {
+                return !url.startsWith("native");
+            }
 
-    public boolean dispatch(String url) {
-        return dispatch(url, null);
+            @Override
+            public void afterRouterDispatchSucceed(String url) {
+
+            }
+
+            @Override
+            public void afterRouterDispatchFailed(String url) {
+
+            }
+
+            @Override
+            public int priority() {
+                return 0;
+            }
+        });
     }
 
-    public boolean dispatch(String url, Context context) {
+    public boolean dispatch(String url) {
+        return dispatch(null, url, null);
+    }
+
+    public boolean dispatch(String url, Map<String, String> params) {
+        return dispatch(null, url, params);
+    }
+
+    public boolean dispatch(Context context, String url, Map<String, String> params) {
         if (context == null) {
             context = getTopActivity();
         }
         for (IRouter router: routers) {
-            if (router.dispatch(url, context)) {
+            if (router.dispatch(context, url, params)) {
                 return true;
             }
         }

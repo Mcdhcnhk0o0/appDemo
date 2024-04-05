@@ -3,14 +3,18 @@ package com.example.router;
 import com.example.router.annotation.Router;
 import com.example.router.annotation.Service;
 import com.example.router.annotation.ServiceMethod;
+import com.example.router.processor.SubProcessor;
 import com.google.auto.service.AutoService;
+import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.TypeSpec;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -53,6 +57,9 @@ public class RouterProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> routerAnnotations = new HashSet<>();
+        for (SubProcessor subProcessor: Config.subProcessors) {
+            routerAnnotations.addAll(subProcessor.supportedAnnotations());
+        }
         routerAnnotations.add(Router.class.getCanonicalName());
         routerAnnotations.add(Service.class.getCanonicalName());
         routerAnnotations.add(ServiceMethod.class.getCanonicalName());
@@ -69,11 +76,17 @@ public class RouterProcessor extends AbstractProcessor {
             MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder(INIT_METHOD)
                     .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                     .returns(void.class);
+            List<FieldSpec> fieldSpecList = new ArrayList<>();
             String originalPackageName = null;
             for (Element element: roundEnvironment.getElementsAnnotatedWith(Service.class)) {
                 String serviceName = element.getAnnotation(Service.class).name();
                 String className = element.toString();
                 methodBuilder.addStatement("$T.getInstance().register($S, $S)", ServiceManager.class, serviceName, className);
+                FieldSpec.Builder fieldBuilder = FieldSpec.builder(String.class, serviceName)
+                        .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                        .initializer("$S", className);
+                fieldSpecList.add(fieldBuilder.build());
+
             }
             for (Element element: roundEnvironment.getElementsAnnotatedWith(ServiceMethod.class)) {
 
@@ -106,6 +119,7 @@ public class RouterProcessor extends AbstractProcessor {
             TypeSpec routerInit = TypeSpec.classBuilder(INIT_CLASS)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addMethod(methodBuilder.build())
+                    .addFields(fieldSpecList)
                     .build();
             String packageName = INIT_PACKAGE + "." + originalPackageName;
             JavaFile javaFile = JavaFile.builder(packageName, routerInit).build();
