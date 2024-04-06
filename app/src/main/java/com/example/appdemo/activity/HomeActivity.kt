@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.View
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.*
@@ -62,7 +64,6 @@ class HomeActivity: FragmentActivity() {
         StatusBarUtil.allowLayoutBehindStatusBar()
         StatusBarUtil.changeStatusBarDarkMode()
         StatusBarUtil.wantToGetStatusBarHeight(this)
-        acquireFlutterFragment()
         setContent{
             HomePage()
         }
@@ -112,7 +113,6 @@ class HomeActivity: FragmentActivity() {
 
     @Composable
     fun ContentFragment(paddingValues: PaddingValues) {
-        val topPadding = StatusBarUtil.getStatusBarHeight()
         val fragmentId = View.generateViewId()
         Column {
             AndroidView(
@@ -128,7 +128,7 @@ class HomeActivity: FragmentActivity() {
                             viewModel.tabItems.forEach { item ->
                                 val fragment = getFragmentById(item.id)
                                 add(fragmentId, fragment, item.id)
-                                Log.d("HomeActivity", "${fragment} with id ${fragmentId} and tag ${item.id} is added!!")
+                                Log.d("HomeActivity", "$fragment with id $fragmentId and tag ${item.id} is added!!")
                                 if (item.id != viewModel.selectedTabModel.id) {
                                     hide(fragment)
                                 }
@@ -153,49 +153,6 @@ class HomeActivity: FragmentActivity() {
 
                 }
             )
-//            FragmentContainer(
-//                    modifier = Modifier.fillMaxSize(),
-//                    fragment = Fragment(),
-//                    fragmentManager = supportFragmentManager,
-//                    create =  {
-//                        viewModel.tabItems.forEach {  item ->
-//                            val fragment = getFragmentById(item.id)
-//                            add(it, fragment, item.id)
-//                        }
-//                    },
-//                    update = {
-//                        viewModel.tabItems.forEach {  item ->
-//                            val fragment = getFragmentById(item.id)
-//                            if (fragment.tag == viewModel.selectedTabModel.id) {
-//                                show(fragment)
-//                            } else {
-//                                hide(fragment)
-//                            }
-//                        }
-//                    }
-//                )
-//            if (viewModel.selectedTabModel.id != "mine") {
-//                Text(
-//                    modifier = Modifier
-//                        .wrapContentHeight()
-//                        .padding(top = topPadding.dp),
-//                    text = "Content In ${viewModel.selectedTabModel.description}",
-//                    fontSize = 30.sp
-//                )
-//                FragmentContainer(
-//                    modifier = Modifier.fillMaxSize(),
-//                    fragment = fragment,
-//                    fragmentManager = supportFragmentManager,
-//                    commit =  { replace(it, fragment) }
-//                )
-//            } else {
-//                FragmentContainer(
-//                    modifier = Modifier.fillMaxSize(),
-//                    fragment = flutterFragment!!,
-//                    fragmentManager = supportFragmentManager,
-//                    commit =  { replace(it, flutterFragment!!) }
-//                )
-//            }
 
         }
     }
@@ -207,14 +164,6 @@ class HomeActivity: FragmentActivity() {
             "mine" -> viewModel.cachedFragment["mine"]!!
             else -> viewModel.cachedFragment["home"]!!
         }
-    }
-
-    private fun acquireFlutterFragment(): Fragment {
-        if (flutterFragment == null) {
-            flutterFragment = FlutterRootFragment
-                .withNewEngine().initialRoute("fragment").build<FlutterFragment>()
-        }
-        return flutterFragment as Fragment
     }
 
 }

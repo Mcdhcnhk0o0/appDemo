@@ -11,6 +11,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,12 +35,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import com.example.appdemo.router.OneRouter
+import com.example.appdemo.ui.page.ContentContainerPage
 import com.example.router.RouterManager
 import java.util.Locale
-
-
-data class RouterModel(val name: String, val url: String, val description: String)
-
 
 
 class ContentFragment : Fragment() {
@@ -52,105 +50,9 @@ class ContentFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                RouterActionGrid()
+                ContentContainerPage()
             }
         }
-    }
-
-    @Preview
-    @Composable
-    fun RouterActionGrid() {
-
-        val routerList = remember {
-            mutableStateListOf<RouterModel>()
-        }
-
-        RouterManager.getInstance().routerMap.forEach{
-            val uri = Uri.parse(it.key)
-            var description = RouterManager.getInstance().routerDescriptionMap[it.key]
-            if (description.isNullOrBlank()) {
-                description = uri.authority ?: ""
-            }
-            routerList.add(RouterModel(uri.authority ?: "Unknown", it.key, description))
-        }
-        
-        routerList.add(RouterModel("routerTest", "", "勿点"))
-
-        LazyVerticalGrid(columns = GridCells.Fixed(4)) {
-            items(routerList.size) {i ->
-                val contentChar = routerList[i].name.substring(0, 2).uppercase(Locale.CHINA)
-                var description = routerList[i].description
-                if (description.isBlank()) {
-                    description = routerList[i].name
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.pointerInput(Unit) {
-                        detectTapGestures(
-                            onTap = {
-                                OneRouter.getInstance().dispatch(routerList[i].url)
-                            }
-                        )
-                    }
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .height(48.dp)
-                            .background(
-                                color = Color.DarkGray,
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = contentChar, fontSize = 22.sp, fontWeight = FontWeight.Bold)
-                    }
-                    Text(text = description)
-                }
-            }
-        }
-    }
-
-    @Preview
-    @Composable
-    fun RouterActionList() {
-
-        val routerList = remember {
-            mutableStateListOf<RouterModel>()
-        }
-
-        RouterManager.getInstance().routerMap.forEach{
-            val uri = Uri.parse(it.key)
-            routerList.add(RouterModel(uri.authority ?: "Unknown", it.key, ""))
-        }
-
-        Log.d("RouterCenterActivity", "size: " + RouterManager.getInstance().routerMap.size)
-
-        Column(
-            modifier = Modifier
-                .padding(start = 12.dp, end = 12.dp)
-                .border(width = 2.dp, color = Color.Blue, shape = RoundedCornerShape(12.dp))
-        ) {
-            routerList.forEachIndexed { i, routerModel ->
-                Button(
-                    onClick = {
-                        OneRouter.getInstance().dispatch(routerModel.url)
-                    },
-                    modifier = Modifier
-                        .padding(start = 12.dp, end = 12.dp)
-                        .fillMaxWidth()
-                        .padding(top = 8.dp, bottom = 8.dp)
-                ) {
-                    Text(
-                        text = "${i + 1}. ${routerModel.name}",
-                        fontSize = 16.sp
-                    )
-                }
-            }
-
-        }
-
     }
 
 }

@@ -17,7 +17,9 @@ import androidx.lifecycle.ViewModel
 import com.example.appdemo.activity.home.ui.content.ContentFragment
 import com.example.appdemo.activity.home.ui.home.HomeFragment
 import com.example.appdemo.activity.home.ui.mine.MineFragment
+import com.example.appdemo.network.ServiceCreator
 import com.example.appdemo.util.SharedPrefUtil
+import com.example.appdemo.util.UserInfoUtil
 
 
 data class NavigationItemModel(
@@ -68,6 +70,24 @@ class HomeViewModel: ViewModel() {
         } else {
             "处于远程调试模式"
         }
+    }
+
+    fun changeDebugUrl() {
+        if (debugAddress.isNotBlank()) {
+            val newDebugUrl = "http://${debugAddress}:8880/demo/"
+            debugUrl = newDebugUrl
+            ServiceCreator.refreshDebugUrl(newDebugUrl, needApply = false)
+        }
+    }
+
+    fun changeEnvironment() {
+        debugMode = !debugMode
+        if (debugMode) {
+            SharedPrefUtil.applyDebugUrlSetting()
+        } else {
+            SharedPrefUtil.applyReleaseUrlSetting()
+        }
+        ServiceCreator.refreshToken(UserInfoUtil.getUserToken())
     }
 
 }

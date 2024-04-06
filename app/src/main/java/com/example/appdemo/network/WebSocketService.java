@@ -18,7 +18,7 @@ public class WebSocketService extends WebSocketListener {
 
     private static final String TAG = WebSocketService.class.getSimpleName();
 
-    private static final String LOCAL_WEBSOCKET_URL = "ws://192.168.0.102:8880/demo/websocket/123";
+    private static final String LOCAL_WEBSOCKET_URL = "ws://192.168.0.105:8880/demo/websocket/996";
     private static final String REMOTE_WEBSOCKET_URL = "ws://123.249.16.84:8880/demo/websocket";
 
     private final OkHttpClient client = new OkHttpClient();
