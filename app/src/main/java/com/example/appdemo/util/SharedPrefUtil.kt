@@ -9,17 +9,20 @@ object SharedPrefUtil {
 
     private const val USER_ID_KEY = "cached_user_id"
     private const val USER_TOKEN_KEY = "cached_user_token"
-    private const val DEBUG_ADDRESS_KEY = "debug_address"
     private const val BASE_URL_SETTING_KEY = "base_url_setting"
 
-    fun getSp(): SharedPreferences {
+    private const val LOCAL_IP_KEY = "local_ip_key"
+    private const val REMOTE_IP_KEY = "remote_ip_key"
+
+    private fun getSp(): SharedPreferences {
         return ApplicationUtil.getApplicationContext().getSharedPreferences(SP_NAME, Context.MODE_PRIVATE)
     }
 
-    private fun getStringByKey(key: String, defaultValue: String = ""): String {
-        return getSp().getString(key, "") ?: ""
+    private fun getStringByKey(key: String, defaultValue: String? = ""): String? {
+        return getSp().getString(key, defaultValue)
     }
 
+    // *** 远程/本地环境切换 ***
     fun getBaseUrlSetting(): String {
         return getSp().getString(BASE_URL_SETTING_KEY, "release") ?: "release"
     }
@@ -36,16 +39,26 @@ object SharedPrefUtil {
         getSp().edit().putString(BASE_URL_SETTING_KEY, "release").apply()
     }
 
-    fun getDebugUrlAddress(): String {
-        return getStringByKey(DEBUG_ADDRESS_KEY, defaultValue = "http://192.168.0.102:8880/demo/")
+    // *** 远程/本地url修改 ***
+    fun getLocalIPAddress(): String {
+        return getStringByKey(LOCAL_IP_KEY, defaultValue = "0.0.0.0")!!
     }
 
-    fun setDebugUrlAddress(url: String) {
-        getSp().edit().putString(DEBUG_ADDRESS_KEY, url).apply()
+    fun setLocalIPAddress(url: String) {
+        getSp().edit().putString(LOCAL_IP_KEY, url).apply()
     }
 
+    fun getRemoteIPAddress(): String? {
+        return getStringByKey(REMOTE_IP_KEY, defaultValue = null)
+    }
+
+    fun setRemoteIPAddress(url: String) {
+        getSp().edit().putString(REMOTE_IP_KEY, url).apply()
+    }
+
+    // *** 用户信息本地缓存 ***
     fun getUserTokenCache(): String {
-        return getStringByKey(USER_TOKEN_KEY)
+        return getStringByKey(USER_TOKEN_KEY) ?: ""
     }
 
     fun setUserTokenCache(token: String) {
@@ -53,7 +66,7 @@ object SharedPrefUtil {
     }
 
     fun getUserIdCache(): String {
-        return getStringByKey(USER_ID_KEY)
+        return getStringByKey(USER_ID_KEY) ?: ""
     }
 
     fun setUserIdCache(userId: String) {

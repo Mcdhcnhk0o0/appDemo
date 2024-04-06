@@ -50,7 +50,7 @@ class HomeViewModel: ViewModel() {
 
     var debugAddress by mutableStateOf("")
 
-    var debugUrl by mutableStateOf(SharedPrefUtil.getDebugUrlAddress())
+    var debugUrl by mutableStateOf(SharedPrefUtil.getLocalIPAddress())
 
     var debugMode by mutableStateOf(false)
 
@@ -76,7 +76,7 @@ class HomeViewModel: ViewModel() {
         if (debugAddress.isNotBlank()) {
             val newDebugUrl = "http://${debugAddress}:8880/demo/"
             debugUrl = newDebugUrl
-            ServiceCreator.refreshDebugUrl(newDebugUrl, needApply = false)
+            ServiceCreator.refreshLocalIP(newDebugUrl, needApply = false)
         }
     }
 

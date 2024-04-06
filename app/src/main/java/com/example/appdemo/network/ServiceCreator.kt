@@ -13,9 +13,7 @@ object ServiceCreator {
 
     private const val TAG = "HttpDebugLogger"
 
-    private const val remoteBaseUrl = "http://8.141.90.135:8880/demo/"
-
-    private const val defaultLocalBaseUrl = "http://192.168.0.102:8880/demo/"
+    private const val defaultRemoteIP = "8.141.90.135"
 
     private var retrofit: Retrofit? = null
 
@@ -26,7 +24,7 @@ object ServiceCreator {
     @Synchronized
     fun <T> create(serviceClass: Class<T>): T {
         if (retrofit == null) {
-            retrofit = getRetrofit(getBaseUrl(), cachedHttpClient)
+            retrofit = getRetrofit(baseUrl(), cachedHttpClient)
         }
         return retrofit!!.create(serviceClass)
     }
@@ -38,15 +36,22 @@ object ServiceCreator {
         Log.d(TAG, "current token: $token")
         Log.d(TAG, "current userId: ${SharedPrefUtil.getUserIdCache()}")
         Log.d(TAG, "current request mode: ${SharedPrefUtil.getBaseUrlSetting()}")
-        retrofit = getRetrofit(getBaseUrl(), cachedHttpClient)
+        retrofit = getRetrofit(baseUrl(), cachedHttpClient)
     }
 
     @JvmStatic
-    fun refreshDebugUrl(url: String, needApply: Boolean) {
-        val newDebugUrl = "http://${url}:8880/demo/"
-        SharedPrefUtil.setDebugUrlAddress(newDebugUrl)
+    fun refreshLocalIP(ip: String, needApply: Boolean) {
+        SharedPrefUtil.setLocalIPAddress(ip)
         if (needApply) {
-            retrofit = getRetrofit(newDebugUrl, cachedHttpClient)
+            retrofit = getRetrofit(urlFormat(ip), cachedHttpClient)
+        }
+    }
+
+    @JvmStatic
+    fun refreshRemoteIP(ip: String, needApply: Boolean) {
+        SharedPrefUtil.setRemoteIPAddress(ip)
+        if (needApply) {
+            retrofit = getRetrofit(urlFormat(ip), cachedHttpClient)
         }
     }
 
@@ -56,8 +61,8 @@ object ServiceCreator {
             .apply {
                 if (BuildConfig.DEBUG) {
                     addInterceptor(
-                        HttpLoggingInterceptor {
-                                message -> Log.d(TAG, message)
+                        HttpLoggingInterceptor { message ->
+                            Log.d(TAG, message)
                         }.apply {
                             level = HttpLoggingInterceptor.Level.BODY
                         }
@@ -78,20 +83,18 @@ object ServiceCreator {
             .build()
     }
 
-    private fun getDebugUrl(): String {
-        if (SharedPrefUtil.getDebugUrlAddress().isBlank()) {
-            return defaultLocalBaseUrl
+    private fun baseUrl(): String {
+        val localIP = SharedPrefUtil.getLocalIPAddress()
+        val remoteIP = SharedPrefUtil.getRemoteIPAddress() ?: defaultRemoteIP
+        val currentIP = when (SharedPrefUtil.getBaseUrlSetting()) {
+            "debug" -> localIP
+            "release" -> remoteIP
+            else -> remoteIP
         }
-        return SharedPrefUtil.getDebugUrlAddress()
-    }
-
-    private fun getBaseUrl(): String {
-        val baseUrl = when (SharedPrefUtil.getBaseUrlSetting()) {
-            "debug" -> getDebugUrl()
-            "release" -> remoteBaseUrl
-            else -> remoteBaseUrl
+        if (SharedPrefUtil.getRemoteIPAddress() == null) {
+            SharedPrefUtil.setRemoteIPAddress(defaultRemoteIP)
         }
-        return baseUrl
+        return urlFormat(currentIP)
     }
 
     private fun getRetrofit(baseUrl: String, client: OkHttpClient): Retrofit {
@@ -100,6 +103,11 @@ object ServiceCreator {
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @JvmStatic
+    private fun urlFormat(ip: String): String {
+        return "http://$ip:8880/demo/"
     }
 
 }
