@@ -21,7 +21,7 @@ class MineFragment : Fragment() {
     ): View {
         val mView = inflater.inflate(R.layout.fragment_mine, null)
         val flutterFragment = FlutterBoostFragment.CachedEngineFragmentBuilder()
-            .url("flutter://demo1")
+            .url("flutter://router_center")
             .build<FlutterBoostFragment>()
         parentFragmentManager.beginTransaction()
             .add(R.id.mine_flutter_fragment, flutterFragment).commitAllowingStateLoss()

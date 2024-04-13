@@ -5,6 +5,8 @@ import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.example.appdemo.flutter.FlutterRootActivity;
 import com.example.appdemo.router.OneRouter;
 import com.example.appdemo.router.protocol.IRouter;
 import com.idlefish.flutterboost.FlutterBoost;
@@ -47,7 +49,7 @@ public class FlutterRouterWrapper implements IRouter, FlutterBoostDelegate {
 
     @Override
     public void pushFlutterRoute(FlutterBoostRouteOptions options) {
-        Intent intent = new FlutterBoostActivity.CachedEngineIntentBuilder(FlutterBoostActivity.class)
+        Intent intent = new FlutterBoostActivity.CachedEngineIntentBuilder(FlutterRootActivity.class)
                 .backgroundMode(FlutterActivityLaunchConfigs.BackgroundMode.transparent)
                 .destroyEngineWithActivity(false)
                 .uniqueId(options.uniqueId())
